@@ -1,0 +1,10 @@
+import React from 'react';
+import CommunityPage from '@/components/community/CommunityPage';
+
+export default function CommunityPageDemo() {
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <CommunityPage />
+    </div>
+  );
+}
