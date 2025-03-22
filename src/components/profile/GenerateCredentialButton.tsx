@@ -17,8 +17,8 @@ interface GenerateCredentialButtonProps {
   };
   paymentConfirmed: boolean;
   documentationComplete: boolean;
-  onCredentialGenerated: (credentialId: string) => void;
-  alreadyGenerated: boolean;
+  onCredentialGenerated?: (credentialId: string) => void;
+  alreadyGenerated?: boolean;
 }
 
 const GenerateCredentialButton = ({
@@ -26,90 +26,123 @@ const GenerateCredentialButton = ({
   paymentConfirmed,
   documentationComplete,
   onCredentialGenerated,
-  alreadyGenerated,
+  alreadyGenerated = false,
 }: GenerateCredentialButtonProps) => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const { generateCredential, loading } = useCredentials();
+  const [loading, setLoading] = useState(false);
+  const { generateCredential } = useCredentials();
   const { toast } = useToast();
 
   const handleGenerateCredential = async () => {
-    if (!paymentConfirmed || !documentationComplete || alreadyGenerated) {
+    if (!paymentConfirmed) {
+      toast({
+        title: "Pagamento pendente",
+        description:
+          "Você precisa confirmar seu pagamento antes de gerar suas credenciais.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!documentationComplete) {
+      toast({
+        title: "Documentação incompleta",
+        description:
+          "Você precisa completar o envio de documentos antes de gerar suas credenciais.",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
-      setIsGenerating(true);
+      setLoading(true);
 
       // Gerar credencial profissional
       const { data: professionalCredential, error: professionalError } =
         await generateCredential("professional", userData);
 
-      if (professionalError) throw professionalError;
+      if (professionalError) {
+        throw professionalError;
+      }
 
       // Gerar credencial de estudante
       const { data: studentCredential, error: studentError } =
         await generateCredential("student", userData);
 
-      if (studentError) throw studentError;
-
-      // Notificar o componente pai
-      if (professionalCredential) {
-        onCredentialGenerated(professionalCredential.id);
+      if (studentError) {
+        throw studentError;
       }
 
       toast({
         title: "Credenciais geradas com sucesso",
         description:
-          "Suas credenciais digital e de estudante foram geradas e estão disponíveis para uso.",
+          "Suas credenciais digital profissional e de estudante foram geradas com sucesso.",
       });
+
+      // Notificar o componente pai
+      if (onCredentialGenerated && professionalCredential) {
+        onCredentialGenerated(professionalCredential.id);
+      }
     } catch (error) {
       console.error("Erro ao gerar credenciais:", error);
       toast({
         title: "Erro ao gerar credenciais",
-        description: `Ocorreu um erro ao gerar suas credenciais: ${error.message}`,
+        description:
+          "Ocorreu um erro ao gerar suas credenciais. Por favor, tente novamente mais tarde.",
         variant: "destructive",
       });
     } finally {
-      setIsGenerating(false);
+      setLoading(false);
     }
   };
 
-  const isDisabled =
-    !paymentConfirmed || !documentationComplete || alreadyGenerated;
-
-  if (alreadyGenerated) {
-    return (
-      <Button className="w-full gap-2" variant="outline" disabled>
-        <CheckCircle className="h-4 w-4 mr-2" />
-        Credenciais já geradas
-      </Button>
-    );
-  }
-
   return (
-    <Button
-      onClick={handleGenerateCredential}
-      disabled={isDisabled || isGenerating || loading}
-      className="w-full"
-    >
-      {isGenerating || loading ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando
-          Credenciais...
-        </>
+    <div className="space-y-4">
+      {!alreadyGenerated ? (
+        <Button
+          onClick={handleGenerateCredential}
+          disabled={loading || !paymentConfirmed || !documentationComplete}
+          className="w-full"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando
+              credenciais...
+            </>
+          ) : (
+            <>
+              <QrCode className="mr-2 h-4 w-4" /> Gerar Credenciais Digitais
+            </>
+          )}
+        </Button>
       ) : (
-        <>
-          <QrCode className="mr-2 h-4 w-4" />
-          {alreadyGenerated
-            ? "Credencial já gerada"
-            : !paymentConfirmed
-              ? "Pagamento pendente"
-              : !documentationComplete
-                ? "Documentação incompleta"
-                : "Gerar Credencial Digital"}
-        </>
+        <Button
+          variant="outline"
+          className="w-full bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700"
+          disabled
+        >
+          <CheckCircle className="mr-2 h-4 w-4" /> Credenciais Geradas
+        </Button>
       )}
-    </Button>
+
+      {!paymentConfirmed && (
+        <p className="text-sm text-amber-600">
+          Você precisa confirmar seu pagamento antes de gerar suas credenciais.
+        </p>
+      )}
+
+      {!documentationComplete && paymentConfirmed && (
+        <p className="text-sm text-amber-600">
+          Você precisa completar o envio de documentos antes de gerar suas
+          credenciais.
+        </p>
+      )}
+
+      {alreadyGenerated && (
+        <p className="text-sm text-green-600">
+          Suas credenciais já foram geradas. Você pode visualizá-las acima.
+        </p>
+      )}
+    </div>
   );
 };
 

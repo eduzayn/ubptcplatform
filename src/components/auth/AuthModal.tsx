@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { supabase } from "@/lib/supabase";
 import {
   CreditCard,
   User,
@@ -9,6 +10,7 @@ import {
   Lock,
   Building,
   GraduationCap,
+  CreditCard as CPFIcon,
 } from "lucide-react";
 
 import {
@@ -41,6 +43,17 @@ const loginSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Senha deve ter pelo menos 6 caracteres" }),
+});
+
+// Admin login schema
+const adminLoginSchema = z.object({
+  email: z.string().email({ message: "Email inválido" }),
+  password: z
+    .string()
+    .min(11, { message: "CPF inválido" })
+    .regex(/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/, {
+      message: "Formato de CPF inválido",
+    }),
 });
 
 // Signup form schema with multi-step validation
@@ -91,6 +104,15 @@ const AuthModal = ({
   // Login form
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  // Admin login form
+  const adminLoginForm = useForm<z.infer<typeof adminLoginSchema>>({
+    resolver: zodResolver(adminLoginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -243,18 +265,53 @@ const AuthModal = ({
           </TabsContent>
 
           <TabsContent value="admin" className="space-y-4">
-            <Form {...loginForm}>
+            <Form {...adminLoginForm}>
               <form
-                onSubmit={loginForm.handleSubmit((data) => {
+                onSubmit={adminLoginForm.handleSubmit(async (data) => {
                   console.log("Admin login data:", data);
-                  // Handle admin login logic here
-                  onSuccess(true); // Pass true to indicate admin login
-                  // Fechar o modal após login bem-sucedido
-                  const closeButton = document.querySelector(
-                    '[data-state="open"] button[aria-label="Close"]',
-                  );
-                  if (closeButton) {
-                    (closeButton as HTMLButtonElement).click();
+                  // Verificar se o administrador existe no banco de dados
+                  try {
+                    const { data: profiles, error } = await supabase
+                      .from("profiles")
+                      .select("*")
+                      .eq("email", data.email)
+                      .eq("cpf", data.password.replace(/[^0-9]/g, ""))
+                      .eq("role", "admin")
+                      .single();
+
+                    if (error) {
+                      console.error("Erro ao verificar administrador:", error);
+                      adminLoginForm.setError("email", {
+                        message:
+                          "Erro ao verificar credenciais. Tente novamente.",
+                      });
+                      return;
+                    }
+
+                    if (!profiles) {
+                      adminLoginForm.setError("email", {
+                        message:
+                          "Administrador não encontrado ou credenciais inválidas",
+                      });
+                      return;
+                    }
+
+                    // Login bem-sucedido
+                    onSuccess(true); // Pass true to indicate admin login
+
+                    // Fechar o modal após login bem-sucedido
+                    const closeButton = document.querySelector(
+                      '[data-state="open"] button[aria-label="Close"]',
+                    );
+                    if (closeButton) {
+                      (closeButton as HTMLButtonElement).click();
+                    }
+                  } catch (err) {
+                    console.error("Erro ao fazer login:", err);
+                    adminLoginForm.setError("email", {
+                      message:
+                        "Erro ao verificar credenciais. Tente novamente.",
+                    });
                   }
                 })}
                 className="space-y-4"
@@ -265,7 +322,7 @@ const AuthModal = ({
                   </p>
                 </div>
                 <FormField
-                  control={loginForm.control}
+                  control={adminLoginForm.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -285,17 +342,16 @@ const AuthModal = ({
                   )}
                 />
                 <FormField
-                  control={loginForm.control}
+                  control={adminLoginForm.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Senha</FormLabel>
+                      <FormLabel>CPF</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <CPFIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
-                            type="password"
-                            placeholder="******"
+                            placeholder="000.000.000-00"
                             className="pl-10"
                             {...field}
                           />
