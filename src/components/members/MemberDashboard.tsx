@@ -48,8 +48,8 @@ const MemberDashboard = () => {
 
               <MembershipOverview
                 memberSince="01/01/2023"
-                membershipStatus="Ativo"
-                nextPayment="01/06/2023"
+                subscriptionStatus="active"
+                nextBillingDate="01/06/2023"
                 certificationProgress={65}
               />
 

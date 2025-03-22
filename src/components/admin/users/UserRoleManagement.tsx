@@ -232,7 +232,10 @@ const UserRoleManagement = () => {
       // Simulação de aprovação
       const updatedUsers = users.map((user) => {
         if (user.id === selectedUser.id) {
-          return { ...user, status: "active" };
+          return {
+            ...user,
+            status: "active" as "active" | "inactive" | "pending",
+          };
         }
         return user;
       });
@@ -286,7 +289,10 @@ const UserRoleManagement = () => {
       // Simulação de rejeição
       const updatedUsers = users.map((user) => {
         if (user.id === selectedUser.id) {
-          return { ...user, status: "inactive" };
+          return {
+            ...user,
+            status: "inactive" as "active" | "inactive" | "pending",
+          };
         }
         return user;
       });

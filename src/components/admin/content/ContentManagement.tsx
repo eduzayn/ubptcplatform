@@ -11,6 +11,9 @@ import {
   Eye,
   MoreVertical,
   Upload,
+  Menu,
+  Shield,
+  Bell,
 } from "lucide-react";
 import {
   Table,
@@ -28,6 +31,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const mockPages = [
   {
