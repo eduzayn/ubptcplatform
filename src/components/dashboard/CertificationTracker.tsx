@@ -23,6 +23,7 @@ interface CertificationTrackerProps {
   completedRequirements?: CertificationRequirement[];
   totalRequirements?: CertificationRequirement[];
   certificationEligible?: boolean;
+  className?: string;
 }
 
 const CertificationTracker = ({
@@ -80,6 +81,7 @@ const CertificationTracker = ({
     },
   ],
   certificationEligible = false,
+  className,
 }: CertificationTrackerProps) => {
   const progressPercentage = Math.round(
     (completedRequirements.length / totalRequirements.length) * 100,
@@ -88,7 +90,7 @@ const CertificationTracker = ({
   const monthsRemaining = 12 - membershipMonths;
 
   return (
-    <Card className="w-full h-full bg-white shadow-sm">
+    <Card className={`w-full h-full bg-white shadow-sm ${className || ""}`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl font-semibold">

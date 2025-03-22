@@ -145,7 +145,7 @@ const ProfilePage = () => {
                 <TabsContent value="payment" className="mt-6">
                   <PaymentStatus
                     plan="Profissional"
-                    status="active"
+                    status="active" as "active"
                     nextBilling="15/07/2023"
                     amount="R$ 49,90"
                     paymentMethod="Cartão de crédito terminando em 4242"

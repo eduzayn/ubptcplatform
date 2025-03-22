@@ -11,3 +11,6 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
 
 // Re-exportar o hook useAuth para facilitar o uso
 export const useAuth = useSupabaseAuth;
+
+// Dummy export to fix TypeScript errors
+export const AuthProvider = AuthWrapper;

@@ -218,6 +218,7 @@ const MyCourses = () => {
         <CertificationTracker
           membershipMonths={3}
           certificationEligible={false}
+          className=""
         />
       )}
 

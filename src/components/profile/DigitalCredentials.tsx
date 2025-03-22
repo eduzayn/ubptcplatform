@@ -16,7 +16,7 @@ interface DigitalCredentialsProps {
     specialization: string;
     memberSince: string;
     memberId: string;
-    paymentStatus: "active" | "suspended";
+    paymentStatus: string | "active" | "suspended";
     avatarUrl?: string;
   };
   asaasConfirmed?: boolean;
