@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../supabase";
-import { useAuth } from "../hooks";
+import { useAuth } from "./useAuth";
 import type { PostgrestError } from "@supabase/supabase-js";
 import type { Database } from "@/types/database.types";
 

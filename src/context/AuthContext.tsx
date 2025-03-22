@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth as useSupabaseAuth } from "@/lib/hooks/useAuth";
+import { useAuth as useSupabaseAuth } from "@/lib/hooks";
 
 type AuthWrapperProps = {
   children: React.ReactNode;

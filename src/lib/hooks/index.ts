@@ -1,4 +1,4 @@
 export * from "./useCredentials";
 export * from "./useVerifyCredential";
 export * from "./useUserRoles";
-export * from "./useAuth";
+export { useAuth } from "./useAuth";
