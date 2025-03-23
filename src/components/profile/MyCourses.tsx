@@ -16,6 +16,13 @@ import { useLocation } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import CertificationTracker from "../dashboard/CertificationTracker";
 
+// Definindo a interface para CertificationTracker
+interface CertificationTrackerProps {
+  className?: string;
+  membershipMonths?: number;
+  certificationEligible?: boolean;
+}
+
 // Sample data for enrolled courses
 const sampleCourses = [
   {
@@ -214,17 +221,13 @@ const MyCourses = () => {
         </Alert>
       )}
 
-<<<<<<< HEAD
       {activeTab === "in-progress" && (
         <CertificationTracker
+          className="mb-6"
           membershipMonths={3}
           certificationEligible={false}
-          className=""
         />
       )}
-=======
-      {activeTab === "in-progress" && <CertificationTracker className="mb-6" />}
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
       {filteredCourses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
