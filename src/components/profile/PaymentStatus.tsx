@@ -18,16 +18,10 @@ import {
 } from "@/components/ui/table";
 import { CreditCard, Download, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-interface Invoice {
-  id: string;
-  date: string;
-  amount: string;
-  status: string;
-}
+import { PaymentStatus as PaymentStatusType, Invoice } from "@/types/user";
 
 interface PaymentStatusProps {
-  status?: string | "active" | "pending" | "suspended" | "canceled";
+  status?: PaymentStatusType;
   plan?: string;
   nextBilling?: string;
   amount?: string;
@@ -41,23 +35,31 @@ interface PaymentStatusProps {
   setAsaasConfirmed?: (confirmed: boolean) => void;
 }
 
+const defaultProps = {
+  status: "active" as PaymentStatusType,
+  plan: "Profissional",
+  nextBilling: "15/07/2023",
+  amount: "R$ 49,90",
+  paymentMethod: "Cartão de crédito terminando em 4242",
+  invoices: [] as Invoice[],
+  asaasConfirmed: false,
+};
+
 const PaymentStatus = ({
-  status = "active",
-  plan = "Profissional",
-  nextBilling = "15/07/2023",
-  amount = "R$ 49,90",
-  paymentMethod = "Cartão de crédito terminando em 4242",
-  invoices = [],
+  status = defaultProps.status,
+  plan = defaultProps.plan,
+  nextBilling = defaultProps.nextBilling,
+  amount = defaultProps.amount,
+  paymentMethod = defaultProps.paymentMethod,
+  invoices = defaultProps.invoices,
   paymentDate,
   nextPaymentDate,
   paymentId,
   onUpdatePayment = () => {},
-  asaasConfirmed = false,
+  asaasConfirmed = defaultProps.asaasConfirmed,
   setAsaasConfirmed = () => {},
 }: PaymentStatusProps) => {
-  // Função para simular a verificação no Asaas
   const handleVerifyAsaas = () => {
-    // Simulando uma chamada à API do Asaas
     setTimeout(() => {
       setAsaasConfirmed(true);
       alert("Pagamento confirmado no Asaas!");
