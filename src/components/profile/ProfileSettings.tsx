@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AccountSettings from "./AccountSettings";
 
-const ProfileSettings = () => {
+const ProfileSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Configurações da Conta</h2>
