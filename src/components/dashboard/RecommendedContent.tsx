@@ -10,15 +10,7 @@ import {
 import { Button } from "../ui/button";
 import { BookOpen, Headphones, FileText, ArrowRight } from "lucide-react";
 import { cn } from "../../lib/utils";
-
-interface ContentItem {
-  id: string;
-  title: string;
-  description: string;
-  type: "ebook" | "podcast" | "article";
-  thumbnail: string;
-  url: string;
-}
+import { ContentItem } from "@/types/dashboard";
 
 interface RecommendedContentProps {
   items?: ContentItem[];
@@ -26,42 +18,39 @@ interface RecommendedContentProps {
   description?: string;
 }
 
+const defaultItems: ContentItem[] = [
+  {
+    id: "1",
+    title: "Fundamentos da Teoria Psicanalítica",
+    description: "Uma introdução abrangente aos conceitos-chave da psicanálise moderna",
+    type: "ebook",
+    thumbnail: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&q=80",
+    url: "/library/ebook/1",
+  },
+  {
+    id: "2",
+    title: "Estudos de Caso Clínicos em Transtornos de Ansiedade",
+    description: "Abordagens práticas para tratar ansiedade em ambientes clínicos",
+    type: "article",
+    thumbnail: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&q=80",
+    url: "/library/article/2",
+  },
+  {
+    id: "3",
+    title: "A Relação Terapêutica",
+    description: "Explorando a dinâmica das interações cliente-terapeuta",
+    type: "podcast",
+    thumbnail: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=300&q=80",
+    url: "/library/podcast/3",
+  },
+];
+
 const RecommendedContent = ({
-  items = [
-    {
-      id: "1",
-      title: "Fundamentos da Teoria Psicanalítica",
-      description:
-        "Uma introdução abrangente aos conceitos-chave da psicanálise moderna",
-      type: "ebook",
-      thumbnail:
-        "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&q=80",
-      url: "/library/ebook/1",
-    },
-    {
-      id: "2",
-      title: "Estudos de Caso Clínicos em Transtornos de Ansiedade",
-      description:
-        "Abordagens práticas para tratar ansiedade em ambientes clínicos",
-      type: "article",
-      thumbnail:
-        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&q=80",
-      url: "/library/article/2",
-    },
-    {
-      id: "3",
-      title: "A Relação Terapêutica",
-      description: "Explorando a dinâmica das interações cliente-terapeuta",
-      type: "podcast",
-      thumbnail:
-        "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=300&q=80",
-      url: "/library/podcast/3",
-    },
-  ],
+  items = defaultItems,
   title = "Conteúdo Recomendado",
   description = "Materiais educacionais personalizados com base em seus interesses e caminho de certificação",
 }: RecommendedContentProps) => {
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type: ContentItem["type"]) => {
     switch (type) {
       case "ebook":
         return <BookOpen className="h-4 w-4" />;
@@ -74,7 +63,7 @@ const RecommendedContent = ({
     }
   };
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = (type: ContentItem["type"]) => {
     switch (type) {
       case "ebook":
         return "E-Book";
