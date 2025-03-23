@@ -23,3 +23,19 @@ export interface Event {
   speaker: string;
   description: string;
 }
+
+export type CredentialType = "professional" | "student";
+
+export interface CredentialInfo {
+  title: string;
+  colorClass: string;
+  prefix: string;
+}
+
+export interface QrCodeData {
+  id: string;
+  type: CredentialType;
+  memberId: string;
+  timestamp: string;
+  url: string;
+}
