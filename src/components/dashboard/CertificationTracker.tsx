@@ -10,13 +10,7 @@ import {
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { CheckCircle, Clock, Award, BookOpen } from "lucide-react";
-
-interface CertificationRequirement {
-  id: string;
-  name: string;
-  completed: boolean;
-  description: string;
-}
+import { CertificationRequirement } from "@/types/dashboard";
 
 interface CertificationTrackerProps {
   membershipMonths?: number;
@@ -26,60 +20,45 @@ interface CertificationTrackerProps {
   className?: string;
 }
 
+const defaultRequirements: CertificationRequirement[] = [
+  {
+    id: "1",
+    name: "Introdução à Psicanálise",
+    completed: true,
+    description: "Módulo básico sobre fundamentos da psicanálise",
+  },
+  {
+    id: "2",
+    name: "Técnicas Terapêuticas",
+    completed: true,
+    description: "Abordagens práticas para sessões terapêuticas",
+  },
+  {
+    id: "3",
+    name: "Estudos de Caso",
+    completed: true,
+    description: "Análise de casos clínicos reais",
+  },
+  {
+    id: "4",
+    name: "Supervisão Clínica",
+    completed: false,
+    description: "Participação em sessões de supervisão",
+  },
+  {
+    id: "5",
+    name: "Trabalho Final",
+    completed: false,
+    description: "Apresentação de trabalho de conclusão",
+  },
+];
+
+const defaultCompletedRequirements = defaultRequirements.filter(req => req.completed);
+
 const CertificationTracker = ({
   membershipMonths = 5,
-  completedRequirements = [
-    {
-      id: "1",
-      name: "Introdução à Psicanálise",
-      completed: true,
-      description: "Módulo básico sobre fundamentos da psicanálise",
-    },
-    {
-      id: "2",
-      name: "Técnicas Terapêuticas",
-      completed: true,
-      description: "Abordagens práticas para sessões terapêuticas",
-    },
-    {
-      id: "3",
-      name: "Estudos de Caso",
-      completed: true,
-      description: "Análise de casos clínicos reais",
-    },
-  ],
-  totalRequirements = [
-    {
-      id: "1",
-      name: "Introdução à Psicanálise",
-      completed: true,
-      description: "Módulo básico sobre fundamentos da psicanálise",
-    },
-    {
-      id: "2",
-      name: "Técnicas Terapêuticas",
-      completed: true,
-      description: "Abordagens práticas para sessões terapêuticas",
-    },
-    {
-      id: "3",
-      name: "Estudos de Caso",
-      completed: true,
-      description: "Análise de casos clínicos reais",
-    },
-    {
-      id: "4",
-      name: "Supervisão Clínica",
-      completed: false,
-      description: "Participação em sessões de supervisão",
-    },
-    {
-      id: "5",
-      name: "Trabalho Final",
-      completed: false,
-      description: "Apresentação de trabalho de conclusão",
-    },
-  ],
+  completedRequirements = defaultCompletedRequirements,
+  totalRequirements = defaultRequirements,
   certificationEligible = false,
   className,
 }: CertificationTrackerProps) => {
