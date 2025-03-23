@@ -11,6 +11,22 @@ import ProfileSettings from "./ProfileSettings";
 import DigitalCredentials from "./DigitalCredentials";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// Interface para os dados do usuário
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  cpf: string;
+  profession: string;
+  institution: string;
+  graduationYear: string;
+  specialization: string;
+  memberSince: string;
+  memberId: string;
+  paymentStatus: "active" | "suspended";
+  avatarUrl?: string;
+}
+
 const ProfilePage = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const navigate = useNavigate();
@@ -18,20 +34,17 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const [documentsComplete, setDocumentsComplete] = useState(false);
   const [userPhotoUrl, setUserPhotoUrl] = useState<string | undefined>(
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria"
   );
 
-  // Alterna a visibilidade da barra lateral (para responsividade mobile)
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
 
-  // Voltar para a página anterior
   const handleBack = () => {
     navigate(-1);
   };
 
-  // Verificar se há um tab específico na URL
   React.useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get("tab");
@@ -39,7 +52,6 @@ const ProfilePage = () => {
       setActiveTab(tab);
     }
 
-    // Check if we're on the my-courses path
     if (location.pathname.includes("/my-courses")) {
       setActiveTab("my-courses");
     }
@@ -50,22 +62,20 @@ const ProfilePage = () => {
     console.log("Documentos completos:", complete);
   };
 
-  // Escutar evento de upload de foto 3x4
   React.useEffect(() => {
-    const handlePhotoUpload = (event: any) => {
+    const handlePhotoUpload = (event: CustomEvent) => {
       const { photoUrl } = event.detail;
       setUserPhotoUrl(photoUrl);
     };
 
-    window.addEventListener("photo3x4Uploaded", handlePhotoUpload);
+    window.addEventListener("photo3x4Uploaded", handlePhotoUpload as EventListener);
 
     return () => {
-      window.removeEventListener("photo3x4Uploaded", handlePhotoUpload);
+      window.removeEventListener("photo3x4Uploaded", handlePhotoUpload as EventListener);
     };
   }, []);
 
-  // Dados do usuário (simulados)
-  const userData = {
+  const userData: UserData = {
     id: "123456",
     name: "Maria Silva",
     email: "maria.silva@email.com",
@@ -76,15 +86,13 @@ const ProfilePage = () => {
     specialization: "Psicanálise",
     memberSince: "15 de Janeiro, 2023",
     memberId: "UBPTC-2023-7845",
-    paymentStatus: "active" as "active" | "suspended",
+    paymentStatus: "active",
     avatarUrl: userPhotoUrl,
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Layout Principal */}
       <div className="flex flex-col h-screen">
-        {/* Barra de Navegação Superior */}
         <Navbar
           onMenuToggle={toggleSidebar}
           username="Maria Silva"
@@ -93,16 +101,13 @@ const ProfilePage = () => {
           isAdmin={true}
         />
 
-        {/* Área de Conteúdo Principal com Barra Lateral */}
         <div className="flex flex-1 overflow-hidden">
-          {/* Barra Lateral - mostrada condicionalmente com base no estado e tamanho da tela */}
           <div
             className={`${showSidebar ? "block" : "hidden"} md:block flex-shrink-0`}
           >
             <Sidebar />
           </div>
 
-          {/* Conteúdo Principal */}
           <main className="flex-1 overflow-y-auto p-4 md:p-6">
             <div className="max-w-7xl mx-auto">
               <Tabs
