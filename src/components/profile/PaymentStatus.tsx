@@ -18,7 +18,29 @@ import {
 } from "@/components/ui/table";
 import { CreditCard, Download, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PaymentStatusProps, PaymentStatusType } from "@/types/dashboard";
+import { PaymentStatusType } from "@/types/dashboard";
+
+interface Invoice {
+  id: string;
+  date: string;
+  amount: string;
+  status: "Pago" | "Pendente" | "Cancelado";
+}
+
+interface PaymentStatusProps {
+  status?: PaymentStatusType;
+  plan?: string;
+  nextBilling?: string;
+  amount?: string;
+  paymentMethod?: string;
+  invoices?: Invoice[];
+  paymentDate?: string;
+  nextPaymentDate?: string;
+  paymentId?: string;
+  onUpdatePayment?: () => void;
+  paymentConfirmed?: boolean;
+  setPaymentConfirmed?: (confirmed: boolean) => void;
+}
 
 const statusConfig = {
   active: { label: "Ativo", className: "bg-green-100 text-green-800 hover:bg-green-100" },
@@ -27,14 +49,14 @@ const statusConfig = {
   cancelled: { label: "Cancelado", className: "bg-red-100 text-red-800 hover:bg-red-100" },
 };
 
-const defaultProps: Required<Pick<PaymentStatusProps, 'status' | 'plan' | 'nextBilling' | 'amount' | 'paymentMethod' | 'invoices' | 'asaasConfirmed'>> = {
+const defaultProps: Required<Pick<PaymentStatusProps, 'status' | 'plan' | 'nextBilling' | 'amount' | 'paymentMethod' | 'invoices' | 'paymentConfirmed'>> = {
   status: "active",
   plan: "Profissional",
   nextBilling: "15/07/2023",
   amount: "R$ 49,90",
   paymentMethod: "Cartão de crédito terminando em 4242",
   invoices: [],
-  asaasConfirmed: false,
+  paymentConfirmed: false,
 };
 
 const PaymentStatus: React.FC<PaymentStatusProps> = ({
@@ -48,13 +70,13 @@ const PaymentStatus: React.FC<PaymentStatusProps> = ({
   nextPaymentDate,
   paymentId,
   onUpdatePayment = () => {},
-  asaasConfirmed = defaultProps.asaasConfirmed,
-  setAsaasConfirmed = () => {},
+  paymentConfirmed = defaultProps.paymentConfirmed,
+  setPaymentConfirmed = () => {},
 }) => {
-  const handleVerifyAsaas = () => {
+  const handleVerifyPayment = () => {
     setTimeout(() => {
-      setAsaasConfirmed(true);
-      alert("Pagamento confirmado no Asaas!");
+      setPaymentConfirmed(true);
+      alert("Pagamento confirmado!");
     }, 1500);
   };
 
@@ -67,7 +89,7 @@ const PaymentStatus: React.FC<PaymentStatusProps> = ({
     );
   };
 
-  const renderInvoiceStatus = (status: string) => {
+  const renderInvoiceStatus = (status: Invoice["status"]) => {
     const statusStyles = {
       Pago: "bg-green-50 text-green-700 border-green-200",
       Pendente: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -77,7 +99,7 @@ const PaymentStatus: React.FC<PaymentStatusProps> = ({
     return (
       <Badge
         variant="outline"
-        className={statusStyles[status as keyof typeof statusStyles]}
+        className={statusStyles[status]}
       >
         {status}
       </Badge>
@@ -117,8 +139,8 @@ const PaymentStatus: React.FC<PaymentStatusProps> = ({
           <ActionButtons 
             status={status}
             onUpdatePayment={onUpdatePayment}
-            asaasConfirmed={asaasConfirmed}
-            onVerifyAsaas={handleVerifyAsaas}
+            paymentConfirmed={paymentConfirmed}
+            onVerifyPayment={handleVerifyPayment}
           />
         </CardContent>
       </Card>
@@ -126,7 +148,12 @@ const PaymentStatus: React.FC<PaymentStatusProps> = ({
   );
 };
 
-const InfoItem: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
+interface InfoItemProps {
+  label: string;
+  value: React.ReactNode;
+}
+
+const InfoItem: React.FC<InfoItemProps> = ({ label, value }) => (
   <div className="space-y-1">
     <h3 className="text-sm font-medium text-muted-foreground">{label}</h3>
     {typeof value === "string" ? (
@@ -137,7 +164,11 @@ const InfoItem: React.FC<{ label: string; value: React.ReactNode }> = ({ label, 
   </div>
 );
 
-const PaymentMethod: React.FC<{ method: string }> = ({ method }) => (
+interface PaymentMethodProps {
+  method: string;
+}
+
+const PaymentMethod: React.FC<PaymentMethodProps> = ({ method }) => (
   <div className="pt-4 border-t">
     <h3 className="text-sm font-medium mb-2">Método de Pagamento</h3>
     <div className="flex items-center gap-2 p-3 rounded-md bg-muted/50">
@@ -158,10 +189,12 @@ const SuspensionAlert = () => (
   </Alert>
 );
 
-const InvoicesSection: React.FC<{
+interface InvoicesSectionProps {
   invoices: Invoice[];
-  renderInvoiceStatus: (status: string) => JSX.Element;
-}> = ({ invoices, renderInvoiceStatus }) => (
+  renderInvoiceStatus: (status: Invoice["status"]) => JSX.Element;
+}
+
+const InvoicesSection: React.FC<InvoicesSectionProps> = ({ invoices, renderInvoiceStatus }) => (
   <>
     <div className="flex justify-between items-center pt-4 border-t">
       <h3 className="text-sm font-medium">Histórico de Faturas</h3>
@@ -207,12 +240,19 @@ const InvoicesSection: React.FC<{
   </>
 );
 
-const ActionButtons: React.FC<{
+interface ActionButtonsProps {
   status: PaymentStatusType;
   onUpdatePayment: () => void;
-  asaasConfirmed: boolean;
-  onVerifyAsaas: () => void;
-}> = ({ status, onUpdatePayment, asaasConfirmed, onVerifyAsaas }) => (
+  paymentConfirmed: boolean;
+  onVerifyPayment: () => void;
+}
+
+const ActionButtons: React.FC<ActionButtonsProps> = ({ 
+  status, 
+  onUpdatePayment, 
+  paymentConfirmed, 
+  onVerifyPayment 
+}) => (
   <>
     <div className="flex justify-between pt-4 border-t">
       <Button variant="outline" onClick={onUpdatePayment}>
@@ -225,9 +265,9 @@ const ActionButtons: React.FC<{
       )}
     </div>
 
-    {!asaasConfirmed && (
-      <Button className="w-full mt-4" onClick={onVerifyAsaas}>
-        Verificar Pagamento no Asaas
+    {!paymentConfirmed && (
+      <Button className="w-full mt-4" onClick={onVerifyPayment}>
+        Verificar Pagamento
       </Button>
     )}
   </>
