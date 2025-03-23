@@ -8,28 +8,28 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QrCode, Download, Share2 } from "lucide-react";
+import { CredentialType } from "@/types/dashboard";
 
 interface QrCodeModalProps {
   open: boolean;
   onClose: () => void;
-  credentialType: "professional" | "student";
+  credentialType: CredentialType;
   qrCodeData: string;
   memberId: string;
 }
 
-const QrCodeModal = ({
+const QrCodeModal: React.FC<QrCodeModalProps> = ({
   open,
   onClose,
   credentialType,
   qrCodeData,
   memberId,
-}: QrCodeModalProps) => {
+}) => {
   const isProfessional = credentialType === "professional";
   const title = isProfessional
     ? "Credencial Profissional"
     : "Credencial de Estudante";
 
-  // Simulated QR code display - in a real app, use a QR code generation library
   const qrCodeDisplay = (
     <div className="flex flex-col items-center justify-center p-6 bg-white rounded-lg border-2 border-gray-200 mx-auto w-64 h-64">
       <QrCode
