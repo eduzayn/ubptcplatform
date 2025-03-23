@@ -1,145 +1,141 @@
 import React from "react";
-import { format } from "date-fns";
-import { Calendar, Clock, Users, ArrowRight } from "lucide-react";
-import { Button } from "../ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "../ui/card";
-
-interface Event {
-  id: string;
-  title: string;
-  date: Date;
-  time: string;
-  attendees: number;
-  registered: boolean;
-  type: "workshop" | "supervision" | "presentation";
-}
+import { Button } from "../ui/button";
+import { Calendar, Video, Users, ArrowRight } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Event } from "@/types/dashboard";
 
 interface UpcomingEventsProps {
   events?: Event[];
-  className?: string;
+  title?: string;
+  description?: string;
 }
 
-const UpcomingEvents = ({
-  events = [
-    {
-      id: "1",
-      title: "Sessão de Supervisão Clínica",
-      date: new Date(Date.now() + 86400000 * 2), // 2 days from now
-      time: "19:00 - 20:30",
-      attendees: 24,
-      registered: true,
-      type: "supervision",
-    },
-    {
-      id: "2",
-      title: "Workshop: Abordagens Informadas por Trauma",
-      date: new Date(Date.now() + 86400000 * 5), // 5 days from now
-      time: "14:00 - 16:00",
-      attendees: 42,
-      registered: false,
-      type: "workshop",
-    },
-    {
-      id: "3",
-      title: "Apresentação de Membro: Estudos de Caso",
-      date: new Date(Date.now() + 86400000 * 7), // 7 days from now
-      time: "18:30 - 20:00",
-      attendees: 18,
-      registered: false,
-      type: "presentation",
-    },
-  ],
-  className = "",
+const defaultEvents: Event[] = [
+  {
+    id: "1",
+    title: "Webinar: Técnicas Avançadas em Psicoterapia",
+    date: "2024-03-15",
+    time: "19:00",
+    type: "webinar",
+    speaker: "Dra. Maria Santos",
+    description: "Discussão sobre novas abordagens em psicoterapia"
+  },
+  {
+    id: "2",
+    title: "Workshop de Supervisão Clínica",
+    date: "2024-03-20",
+    time: "14:00",
+    type: "workshop",
+    speaker: "Dr. João Silva",
+    description: "Sessão prática de supervisão de casos clínicos"
+  },
+  {
+    id: "3",
+    title: "Palestra: Trauma e Resiliência",
+    date: "2024-03-25",
+    time: "20:00",
+    type: "lecture",
+    speaker: "Dra. Ana Oliveira",
+    description: "Abordagens contemporâneas no tratamento do trauma"
+  }
+];
+
+const defaultProps = {
+  title: "Próximos Eventos",
+  description: "Eventos e atividades programadas para sua formação continuada"
+};
+
+const UpcomingEvents = ({ 
+  events = defaultEvents,
+  title = defaultProps.title,
+  description = defaultProps.description
 }: UpcomingEventsProps) => {
+  const getEventIcon = (type: Event["type"]) => {
+    switch (type) {
+      case "webinar":
+        return <Video className="h-4 w-4" />;
+      case "workshop":
+        return <Users className="h-4 w-4" />;
+      case "lecture":
+      case "meeting":
+        return <Calendar className="h-4 w-4" />;
+      default:
+        return <Calendar className="h-4 w-4" />;
+    }
+  };
+
+  const getEventTypeLabel = (type: Event["type"]) => {
+    switch (type) {
+      case "webinar":
+        return "Webinar";
+      case "workshop":
+        return "Workshop";
+      case "lecture":
+        return "Palestra";
+      case "meeting":
+        return "Reunião";
+      default:
+        return "Evento";
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long'
+    });
+  };
+
   return (
-    <Card className={`w-full h-full bg-white ${className}`}>
+    <Card className="w-full h-full bg-white shadow-sm">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Próximos Eventos</CardTitle>
-        <CardDescription>
-          Suas sessões agendadas de desenvolvimento profissional
-        </CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {events.map((event) => (
-          <div
-            key={event.id}
-            className="flex flex-col p-3 rounded-lg border border-gray-100 hover:border-gray-200 transition-all"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <h4 className="font-medium text-base">{event.title}</h4>
-              <span
-                className={`text-xs px-2 py-1 rounded-full ${getEventTypeBadgeColor(event.type)}`}
-              >
-                {formatEventType(event.type)}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{format(event.date, "MMM d, yyyy")}</span>
+      <CardContent>
+        <div className="space-y-4">
+          {events.map((event) => (
+            <div key={event.id} className="flex items-start space-x-4 p-3 rounded-lg border">
+              <div className="flex-shrink-0 p-2 bg-primary/10 rounded-md">
+                {getEventIcon(event.type)}
               </div>
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                <span>{event.time}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                <span>{event.attendees} participantes</span>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" className="text-xs">
+                    {getEventTypeLabel(event.type)}
+                  </Badge>
+                </div>
+                <h4 className="font-medium">{event.title}</h4>
+                <p className="text-sm text-muted-foreground">{event.description}</p>
+                <div className="mt-2 flex items-center gap-2 flex-wrap">
+                  <Badge variant="secondary">
+                    {formatDate(event.date)} - {event.time}
+                  </Badge>
+                  <Badge variant="outline" className="text-primary">
+                    {event.speaker}
+                  </Badge>
+                </div>
               </div>
             </div>
-            <div className="mt-3 flex justify-end">
-              <Button
-                variant={event.registered ? "secondary" : "default"}
-                size="sm"
-              >
-                {event.registered ? "Inscrito" : "Inscrever-se"}
-              </Button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </CardContent>
       <CardFooter>
-        <Button variant="ghost" className="w-full justify-between">
-          Ver todos os eventos
-          <ArrowRight className="h-4 w-4 ml-2" />
+        <Button variant="outline" className="w-full" size="sm">
+          Ver Todos os Eventos
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>
   );
-};
-
-// Helper functions
-const getEventTypeBadgeColor = (type: Event["type"]): string => {
-  switch (type) {
-    case "workshop":
-      return "bg-blue-100 text-blue-800";
-    case "supervision":
-      return "bg-purple-100 text-purple-800";
-    case "presentation":
-      return "bg-green-100 text-green-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
-const formatEventType = (type: Event["type"]): string => {
-  switch (type) {
-    case "workshop":
-      return "Workshop";
-    case "supervision":
-      return "Supervisão";
-    case "presentation":
-      return "Apresentação";
-    default:
-      return type;
-  }
 };
 
 export default UpcomingEvents;
