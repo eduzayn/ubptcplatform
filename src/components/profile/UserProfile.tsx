@@ -44,7 +44,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
   onBack = () => {},
 }) => {
   const [activeTab, setActiveTab] = useState("personal");
-  const [asaasConfirmed, setAsaasConfirmed] = useState(false);
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [userPhoto, setUserPhoto] = useState<string | undefined>(userData.avatarUrl);
 
   useEffect(() => {
@@ -81,8 +81,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
           <TabsContent value="association">
             <AssociationStatusTab 
               userData={userData}
-              asaasConfirmed={asaasConfirmed}
-              setAsaasConfirmed={setAsaasConfirmed}
+              paymentConfirmed={paymentConfirmed}
+              setPaymentConfirmed={setPaymentConfirmed}
             />
           </TabsContent>
 
@@ -160,14 +160,14 @@ const PersonalInfoTab: React.FC<{ userData: UserProfileProps["userData"] }> = ({
 
 interface AssociationStatusTabProps {
   userData: UserProfileProps["userData"];
-  asaasConfirmed: boolean;
-  setAsaasConfirmed: (confirmed: boolean) => void;
+  paymentConfirmed: boolean;
+  setPaymentConfirmed: (confirmed: boolean) => void;
 }
 
 const AssociationStatusTab: React.FC<AssociationStatusTabProps> = ({
   userData,
-  asaasConfirmed,
-  setAsaasConfirmed,
+  paymentConfirmed,
+  setPaymentConfirmed,
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     <StatusCard userData={userData} />
@@ -179,10 +179,10 @@ const AssociationStatusTab: React.FC<AssociationStatusTabProps> = ({
         paymentMethod="Cartão de crédito"
         paymentId="pay_123456"
         onUpdatePayment={() => console.log("Atualizar método de pagamento")}
-        asaasConfirmed={asaasConfirmed}
-        setAsaasConfirmed={setAsaasConfirmed}
+        paymentConfirmed={paymentConfirmed}
+        setPaymentConfirmed={setPaymentConfirmed}
       />
-      {!asaasConfirmed && <AsaasWarning />}
+      {!paymentConfirmed && <PaymentWarning />}
     </div>
   </div>
 );
@@ -193,14 +193,40 @@ const StatusBadge: React.FC<{ status: PaymentStatusType }> = ({ status }) => (
   </Badge>
 );
 
-const AsaasWarning: React.FC = () => (
+const PaymentWarning: React.FC = () => (
   <Alert variant="warning" className="bg-amber-50 text-amber-800 border-amber-200">
     <AlertCircle className="h-4 w-4" />
     <AlertTitle>Acesso às credenciais bloqueado</AlertTitle>
     <AlertDescription>
-      Você precisa confirmar seu pagamento no Asaas para ter acesso às suas credenciais digitais.
+      Você precisa confirmar seu pagamento para ter acesso às suas credenciais digitais.
     </AlertDescription>
   </Alert>
 );
 
-const StatusCard: React.FC<{ u
+interface StatusCardProps {
+  userData: UserProfileProps["userData"];
+}
+
+const StatusCard: React.FC<StatusCardProps> = ({ userData }) => (
+  <Card className="bg-white">
+    <CardContent className="pt-6">
+      <h3 className="font-semibold mb-4">Status da Associação</h3>
+      <div className="space-y-4">
+        <div>
+          <p className="text-sm text-muted-foreground">ID do Membro</p>
+          <p className="font-medium">{userData.memberId}</p>
+        </div>
+        <div>
+          <p className="text-sm text-muted-foreground">Data de Início</p>
+          <p className="font-medium">{userData.memberSince}</p>
+        </div>
+        <div>
+          <p className="text-sm text-muted-foreground">Status</p>
+          <StatusBadge status={userData.paymentStatus} />
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+export default UserProfile;
