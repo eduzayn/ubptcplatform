@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { QrCode, Loader2, CheckCircle } from "lucide-react";
 import { useCredentials } from "@/lib/hooks";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { CredentialType } from "@/types/dashboard";
 
 interface CredentialUserData {
@@ -37,13 +37,13 @@ const defaultProps = {
   alreadyGenerated: false,
 };
 
-const GenerateCredentialButton = ({
+const GenerateCredentialButton: React.FC<GenerateCredentialButtonProps> = ({
   userData,
   paymentConfirmed,
   documentationComplete,
   onCredentialGenerated = defaultProps.onCredentialGenerated,
   alreadyGenerated = defaultProps.alreadyGenerated,
-}: GenerateCredentialButtonProps) => {
+}) => {
   const [loading, setLoading] = useState(false);
   const { generateCredential } = useCredentials();
   const { toast } = useToast();
