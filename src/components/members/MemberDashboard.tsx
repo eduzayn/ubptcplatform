@@ -46,18 +46,23 @@ const MemberDashboard = () => {
             <div className="max-w-6xl mx-auto space-y-6">
               <h1 className="text-3xl font-bold">Bem-vindo, João</h1>
 
-              <MembershipOverview
-                memberSince="01/01/2023"
-<<<<<<< HEAD
-                subscriptionStatus="active"
-                nextBillingDate="01/06/2023"
-=======
-                membershipStatus="Ativo"
-                nextPayment="01/06/2023"
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
-                certificationProgress={65}
-              />
+<MembershipOverview
+  memberSince="01/01/2023"
+  membershipStatus="active"  // Padronizando para usar membershipStatus
+  nextPayment="01/06/2023"  // Padronizando para usar nextPayment
+  certificationProgress={65}
+/>
 
+
+interface MembershipOverviewProps {
+  memberSince: string;
+  membershipStatus: "active" | "suspended" | "pending";  // Definindo os valores possíveis
+  nextPayment: string;
+  certificationProgress: number;
+}
+
+const MemberDashboard = () => {
+  // ... resto do código ...
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader className="pb-2">
