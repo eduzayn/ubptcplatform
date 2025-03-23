@@ -12,7 +12,7 @@ import ProfileSettings from "./ProfileSettings";
 import DigitalCredentials from "./DigitalCredentials";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const ProfilePage = () => {
+const ProfilePage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,7 +30,7 @@ const ProfilePage = () => {
     navigate(-1);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get("tab");
     if (tab) {
@@ -47,7 +47,7 @@ const ProfilePage = () => {
     console.log("Documentos completos:", complete);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handlePhotoUpload = (event: CustomEvent<{ photoUrl: string }>) => {
       const { photoUrl } = event.detail;
       setUserPhotoUrl(photoUrl);
@@ -139,7 +139,8 @@ const ProfilePage = () => {
                       paymentStatus: userData.paymentStatus,
                       avatarUrl: userData.avatarUrl
                     }}
-                    asaasConfirmed={true}
+                    paymentConfirmed={true}
+                    documentationComplete={documentsComplete}
                   />
                 </TabsContent>
                 <TabsContent value="payment" className="mt-6">
