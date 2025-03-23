@@ -6,19 +6,10 @@ import GenerateCredentialButton from "./GenerateCredentialButton";
 import { useCredentials } from "@/lib/hooks";
 import CredentialCard from "./CredentialCard";
 import QrCodeModal from "./QrCodeModal";
+import { UserData } from "@/types/user";
 
 interface DigitalCredentialsProps {
-  userData: {
-    id: string;
-    name: string;
-    cpf: string;
-    profession: string;
-    specialization: string;
-    memberSince: string;
-    memberId: string;
-    paymentStatus: "active" | "suspended";
-    avatarUrl?: string;
-  };
+  userData: Pick<UserData, 'id' | 'name' | 'cpf' | 'profession' | 'specialization' | 'memberSince' | 'memberId' | 'paymentStatus' | 'avatarUrl'>;
   asaasConfirmed?: boolean;
 }
 
