@@ -16,7 +16,21 @@ import { useLocation } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import CertificationTracker from "../dashboard/CertificationTracker";
 
-// Interfaces atualizadas para o CertificationTracker
+interface Course {
+  id: number;
+  title: string;
+  instructor: string;
+  progress: number;
+  lastAccessed: string;
+  image: string;
+  totalModules: number;
+  completedModules: number;
+  totalHours: number;
+  category: string;
+  nextLesson: string;
+  certificate: boolean;
+}
+
 interface CertificationRequirement {
   id: string;
   name: string;
@@ -32,8 +46,14 @@ interface CertificationTrackerProps {
   className?: string;
 }
 
+interface CourseEnrolledEvent extends CustomEvent {
+  detail: {
+    course: Course;
+  };
+}
+
 // Sample data for enrolled courses
-const sampleCourses = [
+const sampleCourses: Course[] = [
   {
     id: 1,
     title: "Introdução à Psicanálise",
@@ -66,8 +86,8 @@ const sampleCourses = [
   },
 ];
 
-const CourseCard = ({ course }) => {
-  const formatDate = (dateString) => {
+const CourseCard: React.FC<{ course: Course }> = ({ course }) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
@@ -151,8 +171,8 @@ const CourseCard = ({ course }) => {
   );
 };
 
-const MyCourses = () => {
-  const [enrolledCourses, setEnrolledCourses] = useState(sampleCourses);
+const MyCourses: React.FC = () => {
+  const [enrolledCourses, setEnrolledCourses] = useState<Course[]>(sampleCourses);
   const [activeTab, setActiveTab] = useState("all");
   const location = useLocation();
   const [successMessage, setSuccessMessage] = useState("");
@@ -167,7 +187,7 @@ const MyCourses = () => {
 
   // Listen for course enrollment events
   useEffect(() => {
-    const handleCourseEnrolled = (event) => {
+    const handleCourseEnrolled = (event: CourseEnrolledEvent) => {
       const newCourse = event.detail.course;
       // Check if course already exists
       if (!enrolledCourses.some((course) => course.id === newCourse.id)) {
@@ -188,9 +208,9 @@ const MyCourses = () => {
       }
     };
 
-    window.addEventListener("courseEnrolled", handleCourseEnrolled);
+    window.addEventListener("courseEnrolled", handleCourseEnrolled as EventListener);
     return () =>
-      window.removeEventListener("courseEnrolled", handleCourseEnrolled);
+      window.removeEventListener("courseEnrolled", handleCourseEnrolled as EventListener);
   }, [enrolledCourses]);
 
   // Check for success message from location state
