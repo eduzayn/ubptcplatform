@@ -128,7 +128,12 @@ const CredentialCard: React.FC<CredentialCardProps> = ({
   );
 };
 
-const DetailRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+interface DetailRowProps {
+  label: string;
+  value: string;
+}
+
+const DetailRow: React.FC<DetailRowProps> = ({ label, value }) => (
   <div className="flex justify-between">
     <span className="text-sm font-medium">{label}:</span>
     <span className="text-sm">{value}</span>
