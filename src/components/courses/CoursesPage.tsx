@@ -144,7 +144,10 @@ const categories = [
 ];
 
 const CourseCard = ({ course }) => {
+<<<<<<< HEAD
   const navigate = useNavigate();
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
   const discount = Math.round(
     ((course.originalPrice - course.price) / course.originalPrice) * 100,
   );

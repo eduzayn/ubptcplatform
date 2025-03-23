@@ -27,6 +27,7 @@ export const signUp = async (
   password: string,
   userData: any,
 ) => {
+<<<<<<< HEAD
   try {
     // Verificar se o usuário já existe
     const { data: existingUsers, error: checkError } = await supabase
@@ -98,6 +99,16 @@ export const signUp = async (
     console.error("Erro ao criar usuário:", err);
     return { data: null, error: err };
   }
+=======
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: userData,
+    },
+  });
+  return { data, error };
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 };
 
 export const signOut = async () => {

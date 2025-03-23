@@ -214,6 +214,7 @@ const MyCourses = () => {
         </Alert>
       )}
 
+<<<<<<< HEAD
       {activeTab === "in-progress" && (
         <CertificationTracker
           membershipMonths={3}
@@ -221,6 +222,9 @@ const MyCourses = () => {
           className=""
         />
       )}
+=======
+      {activeTab === "in-progress" && <CertificationTracker className="mb-6" />}
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
       {filteredCourses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

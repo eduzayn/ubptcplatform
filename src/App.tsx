@@ -60,9 +60,13 @@ function App() {
 
   // Protected route component
   const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
+<<<<<<< HEAD
     if (!isAdmin) {
       return <Navigate to="/" />;
     }
+=======
+    // Permitir acesso direto ao painel administrativo em ambiente de teste
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
     return <>{children}</>;
   };
 

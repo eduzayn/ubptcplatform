@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+=======
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
@@ -31,17 +39,27 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
+<<<<<<< HEAD
   },
 );
+=======
+  }
+)
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
+<<<<<<< HEAD
   asChild?: boolean;
+=======
+  asChild?: boolean
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
+<<<<<<< HEAD
     const Comp = asChild ? Slot : "button";
     const isDisabled = props.disabled;
     const hasLoadingIndicator =
@@ -67,3 +85,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+=======
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e

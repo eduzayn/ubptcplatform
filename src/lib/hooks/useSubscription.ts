@@ -20,7 +20,10 @@ export function useSubscription() {
       setLoading(true);
       setError(null);
 
+<<<<<<< HEAD
       // Tente buscar do Supabase primeiro
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
       const { data, error } = await supabase
         .from("subscriptions")
         .select("*")
@@ -29,6 +32,7 @@ export function useSubscription() {
         .limit(1)
         .single();
 
+<<<<<<< HEAD
       // Se não encontrar ou houver erro (exceto "não encontrado")
       if ((error && error.code !== "PGRST116") || !data) {
         console.log("Usando dados simulados para testes");
@@ -47,6 +51,9 @@ export function useSubscription() {
 
         return { data: mockData, error: null };
       }
+=======
+      if (error && error.code !== "PGRST116") throw error;
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
       return { data, error: null };
     } catch (err) {

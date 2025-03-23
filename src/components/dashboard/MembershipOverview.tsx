@@ -19,12 +19,19 @@ import {
 
 interface MembershipOverviewProps {
   memberSince?: string;
+<<<<<<< HEAD
   subscriptionStatus?: "active" | "inactive" | "pending" | string;
   membershipStatus?: string;
   nextBillingDate?: string;
   nextPayment?: string;
   certificationProgress?: number;
   membershipType?: "standard" | "premium" | string;
+=======
+  subscriptionStatus?: "active" | "inactive" | "pending";
+  nextBillingDate?: string;
+  certificationProgress?: number;
+  membershipType?: "standard" | "premium";
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
   paymentMethod?: string;
 }
 

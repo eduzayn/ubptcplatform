@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+<<<<<<< HEAD
 import { supabase } from "@/lib/supabase";
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 import {
   CreditCard,
   User,
@@ -10,7 +13,10 @@ import {
   Lock,
   Building,
   GraduationCap,
+<<<<<<< HEAD
   CreditCard as CPFIcon,
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 } from "lucide-react";
 
 import {
@@ -45,6 +51,7 @@ const loginSchema = z.object({
     .min(6, { message: "Senha deve ter pelo menos 6 caracteres" }),
 });
 
+<<<<<<< HEAD
 // Admin login schema
 const adminLoginSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -56,6 +63,8 @@ const adminLoginSchema = z.object({
     }),
 });
 
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 // Signup form schema with multi-step validation
 const personalInfoSchema = z
   .object({
@@ -110,6 +119,7 @@ const AuthModal = ({
     },
   });
 
+<<<<<<< HEAD
   // Admin login form
   const adminLoginForm = useForm<z.infer<typeof adminLoginSchema>>({
     resolver: zodResolver(adminLoginSchema),
@@ -119,6 +129,8 @@ const AuthModal = ({
     },
   });
 
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
   // Signup forms for each step
   const personalInfoForm = useForm<z.infer<typeof personalInfoSchema>>({
     resolver: zodResolver(personalInfoSchema),
@@ -265,6 +277,7 @@ const AuthModal = ({
           </TabsContent>
 
           <TabsContent value="admin" className="space-y-4">
+<<<<<<< HEAD
             <Form {...adminLoginForm}>
               <form
                 onSubmit={adminLoginForm.handleSubmit(async (data) => {
@@ -312,6 +325,20 @@ const AuthModal = ({
                       message:
                         "Erro ao verificar credenciais. Tente novamente.",
                     });
+=======
+            <Form {...loginForm}>
+              <form
+                onSubmit={loginForm.handleSubmit((data) => {
+                  console.log("Admin login data:", data);
+                  // Handle admin login logic here
+                  onSuccess(true); // Pass true to indicate admin login
+                  // Fechar o modal após login bem-sucedido
+                  const closeButton = document.querySelector(
+                    '[data-state="open"] button[aria-label="Close"]',
+                  );
+                  if (closeButton) {
+                    (closeButton as HTMLButtonElement).click();
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
                   }
                 })}
                 className="space-y-4"
@@ -322,7 +349,11 @@ const AuthModal = ({
                   </p>
                 </div>
                 <FormField
+<<<<<<< HEAD
                   control={adminLoginForm.control}
+=======
+                  control={loginForm.control}
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -342,6 +373,7 @@ const AuthModal = ({
                   )}
                 />
                 <FormField
+<<<<<<< HEAD
                   control={adminLoginForm.control}
                   name="password"
                   render={({ field }) => (
@@ -352,6 +384,19 @@ const AuthModal = ({
                           <CPFIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
                             placeholder="000.000.000-00"
+=======
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Senha</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="password"
+                            placeholder="******"
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
                             className="pl-10"
                             {...field}
                           />

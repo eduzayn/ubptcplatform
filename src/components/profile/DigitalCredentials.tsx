@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
+<<<<<<< HEAD
 import { CheckCircle } from "lucide-react";
 import GenerateCredentialButton from "./GenerateCredentialButton";
 import { useCredentials } from "@/lib/hooks";
 import CredentialCard from "./CredentialCard";
 import QrCodeModal from "./QrCodeModal";
+=======
+import { Button } from "../ui/button";
+import { QrCode, Download, Eye, CheckCircle } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import GenerateCredentialButton from "./GenerateCredentialButton";
+import { useCredentials } from "@/lib/hooks";
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
 interface DigitalCredentialsProps {
   userData: {
@@ -16,7 +24,11 @@ interface DigitalCredentialsProps {
     specialization: string;
     memberSince: string;
     memberId: string;
+<<<<<<< HEAD
     paymentStatus: string | "active" | "suspended";
+=======
+    paymentStatus: "active" | "suspended";
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
     avatarUrl?: string;
   };
   asaasConfirmed?: boolean;
@@ -26,7 +38,11 @@ const DigitalCredentials = ({
   userData,
   asaasConfirmed = true,
 }: DigitalCredentialsProps) => {
+<<<<<<< HEAD
   const [showQrModal, setShowQrModal] = useState(false);
+=======
+  const [showQrInfo, setShowQrInfo] = useState(false);
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
   const [credentialType, setCredentialType] = useState<
     "professional" | "student"
   >("professional");
@@ -40,17 +56,28 @@ const DigitalCredentials = ({
       if (data && data.length > 0) {
         // Se já existem credenciais, definir o ID da primeira
         setCredentialId(data[0].id);
+<<<<<<< HEAD
         console.log("Credenciais carregadas:", data);
       } else {
         console.log("Nenhuma credencial encontrada");
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
       }
     };
 
     loadCredentials();
+<<<<<<< HEAD
   }, [getCredentials]);
 
   const handleQrCodeClick = async (type: "professional" | "student") => {
     setCredentialType(type);
+=======
+  }, []);
+
+  const handleQrCodeClick = async (type: "professional" | "student") => {
+    setCredentialType(type);
+    setShowQrInfo(true);
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
     // Buscar credenciais do banco de dados
     const { data } = await getCredentials();
@@ -60,6 +87,7 @@ const DigitalCredentials = ({
       const credential = data.find((cred) => cred.credential_type === type);
       if (credential && credential.qr_code_data) {
         setQrCodeData(credential.qr_code_data);
+<<<<<<< HEAD
       } else {
         // Fallback: gerar dados do QR code baseado no tipo de credencial
         const qrData =
@@ -79,6 +107,18 @@ const DigitalCredentials = ({
 
     // Abrir o modal do QR code
     setShowQrModal(true);
+=======
+        return;
+      }
+    }
+
+    // Fallback: gerar dados do QR code baseado no tipo de credencial
+    const qrData =
+      type === "professional"
+        ? `PROF-${userData.id}-${userData.memberId}`
+        : `EST-${userData.id}-${userData.memberId}`;
+    setQrCodeData(qrData);
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
   };
 
   const handleCredentialGenerated = (id: string) => {
@@ -135,6 +175,7 @@ const DigitalCredentials = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Credencial Profissional */}
+<<<<<<< HEAD
             <CredentialCard
               type="professional"
               userData={userData}
@@ -147,6 +188,168 @@ const DigitalCredentials = ({
               userData={userData}
               onQrCodeClick={handleQrCodeClick}
             />
+=======
+            <Card className="border-2 border-primary/20 overflow-hidden">
+              <div className="bg-primary text-white p-4">
+                <h3 className="font-bold">Credencial Profissional</h3>
+              </div>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage
+                        src={userData.avatarUrl}
+                        alt={userData.name}
+                      />
+                      <AvatarFallback className="bg-primary text-white">
+                        {userData.name
+                          .split(" ")
+                          .map((name) => name[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-bold">{userData.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {userData.profession}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => handleQrCodeClick("professional")}
+                  >
+                    <QrCode className="h-10 w-10 text-primary" />
+                  </div>
+                </div>
+
+                <div className="space-y-2 mt-4">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium">CPF:</span>
+                    <span className="text-sm">{userData.cpf}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium">
+                      ID Profissional:
+                    </span>
+                    <span className="text-sm">{userData.memberId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium">Especialização:</span>
+                    <span className="text-sm">{userData.specialization}</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-between items-center">
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      Emitido em: {userData.memberSince}
+                    </p>
+                    <Badge
+                      variant={
+                        userData.paymentStatus === "active"
+                          ? "default"
+                          : "destructive"
+                      }
+                      className="mt-1"
+                    >
+                      {userData.paymentStatus === "active"
+                        ? "Ativo"
+                        : "Suspenso"}
+                    </Badge>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" className="gap-1">
+                      <Download className="h-4 w-4" /> PDF
+                    </Button>
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Download className="h-4 w-4" /> Imagem
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Credencial de Estudante */}
+            <Card className="border-2 border-blue-200 overflow-hidden">
+              <div className="bg-blue-500 text-white p-4">
+                <h3 className="font-bold">Credencial de Estudante</h3>
+              </div>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage
+                        src={userData.avatarUrl}
+                        alt={userData.name}
+                      />
+                      <AvatarFallback className="bg-blue-500 text-white">
+                        {userData.name
+                          .split(" ")
+                          .map((name) => name[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-bold">{userData.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Estudante UBPTC
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => handleQrCodeClick("student")}
+                  >
+                    <QrCode className="h-10 w-10 text-blue-500" />
+                  </div>
+                </div>
+
+                <div className="space-y-2 mt-4">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium">CPF:</span>
+                    <span className="text-sm">{userData.cpf}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium">ID Estudante:</span>
+                    <span className="text-sm">EST-{userData.memberId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium">Curso:</span>
+                    <span className="text-sm">Formação Continuada UBPTC</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-between items-center">
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      Válido até: 31/12/2023
+                    </p>
+                    <Badge
+                      variant={
+                        userData.paymentStatus === "active"
+                          ? "default"
+                          : "destructive"
+                      }
+                      className="mt-1"
+                    >
+                      {userData.paymentStatus === "active"
+                        ? "Ativo"
+                        : "Suspenso"}
+                    </Badge>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" className="gap-1">
+                      <Download className="h-4 w-4" /> PDF
+                    </Button>
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Download className="h-4 w-4" /> Imagem
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
           </div>
 
           <div className="mt-6">
@@ -169,6 +372,7 @@ const DigitalCredentials = ({
           </div>
         </div>
       </CardContent>
+<<<<<<< HEAD
 
       {/* QR Code Modal */}
       {showQrModal && qrCodeData && (
@@ -180,6 +384,8 @@ const DigitalCredentials = ({
           memberId={userData.memberId}
         />
       )}
+=======
+>>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
     </Card>
   );
 };
