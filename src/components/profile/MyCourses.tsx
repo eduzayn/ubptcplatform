@@ -16,11 +16,20 @@ import { useLocation } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import CertificationTracker from "../dashboard/CertificationTracker";
 
-// Definindo a interface para CertificationTracker
+// Interfaces atualizadas para o CertificationTracker
+interface CertificationRequirement {
+  id: string;
+  name: string;
+  completed: boolean;
+  description: string;
+}
+
 interface CertificationTrackerProps {
-  className?: string;
   membershipMonths?: number;
+  completedRequirements?: CertificationRequirement[];
+  totalRequirements?: CertificationRequirement[];
   certificationEligible?: boolean;
+  className?: string;
 }
 
 // Sample data for enrolled courses
@@ -226,6 +235,28 @@ const MyCourses = () => {
           className="mb-6"
           membershipMonths={3}
           certificationEligible={false}
+          completedRequirements={[
+            {
+              id: "1",
+              name: "Introdução à Psicanálise",
+              completed: true,
+              description: "Módulo básico sobre fundamentos da psicanálise"
+            }
+          ]}
+          totalRequirements={[
+            {
+              id: "1",
+              name: "Introdução à Psicanálise",
+              completed: true,
+              description: "Módulo básico sobre fundamentos da psicanálise"
+            },
+            {
+              id: "2",
+              name: "Técnicas Terapêuticas",
+              completed: false,
+              description: "Abordagens práticas para sessões terapêuticas"
+            }
+          ]}
         />
       )}
 
