@@ -18,21 +18,17 @@ import {
 } from "lucide-react";
 
 interface MembershipOverviewProps {
-  memberSince?: string;
-  subscriptionStatus?: "active" | "inactive" | "pending" | string;
-  membershipStatus?: string;
-  nextBillingDate?: string;
-  nextPayment?: string;
-  certificationProgress?: number;
-  membershipType?: "standard" | "premium" | string;
+  memberSince: string;
+  membershipStatus: "active" | "suspended" | "pending";
+  nextPayment: string;
+  certificationProgress: number;
+  membershipType?: "standard" | "premium";
   paymentMethod?: string;
 }
 
 const MembershipOverview = ({
-  memberSince = "January 15, 2023",
-  subscriptionStatus = "active",
+  memberSince,
   membershipStatus,
-  nextBillingDate = "June 15, 2023",
   nextPayment,
   certificationProgress = 45,
   membershipType = "standard",
@@ -48,12 +44,12 @@ const MembershipOverview = ({
           <CardDescription>Membro desde {memberSince}</CardDescription>
         </div>
         <Badge
-          variant={subscriptionStatus === "active" ? "default" : "destructive"}
+          variant={membershipStatus === "active" ? "default" : "destructive"}
           className="px-3 py-1"
         >
-          {subscriptionStatus === "active"
+          {membershipStatus === "active"
             ? "Ativa"
-            : subscriptionStatus === "pending"
+            : membershipStatus === "pending"
               ? "Pendente"
               : "Inativa"}
         </Badge>
@@ -67,7 +63,7 @@ const MembershipOverview = ({
           <div className="rounded-md bg-muted/50 p-3">
             <p className="text-sm font-medium">R$49.90/month</p>
             <p className="text-xs text-muted-foreground">
-              Próxima cobrança: {nextBillingDate || nextPayment}
+              Próxima cobrança: {nextPayment}
             </p>
             <p className="text-xs text-muted-foreground">
               Método de pagamento: {paymentMethod}
