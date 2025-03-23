@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Upload,
   Check,
@@ -11,13 +11,13 @@ import {
   Camera,
   Info,
 } from "lucide-react";
-import { Progress } from "../ui/progress";
+import { Progress } from "@/components/ui/progress";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
+} from "@/components/ui/tooltip";
 
 interface DocumentType {
   id: string;
@@ -38,9 +38,26 @@ interface DocumentUploadFormProps {
   onDocumentsComplete?: (complete: boolean) => void;
 }
 
-const DocumentUploadForm = ({
+interface PhotoUploadEvent extends CustomEvent {
+  detail: {
+    photoUrl: string;
+  };
+}
+
+interface QualityCheckResult {
+  passed: boolean;
+  qualityCheck: {
+    isLegible: boolean;
+    hasNoDamage: boolean;
+    isCorrectlyPositioned: boolean;
+    isComplete: boolean;
+  };
+  rejectionReason?: string;
+}
+
+const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({
   onDocumentsComplete,
-}: DocumentUploadFormProps) => {
+}) => {
   const [documents, setDocuments] = useState<DocumentType[]>([
     { id: "rg", name: "RG", status: "pending" },
     { id: "cpf", name: "CPF", status: "pending" },
@@ -62,31 +79,13 @@ const DocumentUploadForm = ({
     },
   ]);
 
-  const checkDocumentQuality = (file: File, docId: string) => {
-    // Simulando verificação de qualidade do documento
-    // Em um cenário real, isso seria feito com análise de imagem/IA
-    return new Promise<{
-      passed: boolean;
-      qualityCheck: {
-        isLegible: boolean;
-        hasNoDamage: boolean;
-        isCorrectlyPositioned: boolean;
-        isComplete: boolean;
-      };
-      rejectionReason?: string;
-    }>((resolve) => {
-      // Simulando verificação de qualidade do documento
-      // Em um cenário real, isso seria feito com análise de imagem/IA
+  const checkDocumentQuality = (file: File, docId: string): Promise<QualityCheckResult> => {
+    return new Promise((resolve) => {
       setTimeout(() => {
-        // Simulando uma verificação aleatória para demonstração
-        // Na implementação real, isso seria substituído por análise real do documento
         const isPhoto = docId === "photo";
         const randomQuality = Math.random();
-
-        // Para demonstração, vamos fazer com que a maioria dos documentos passe, mas alguns falhem
         const passed = randomQuality > 0.2;
 
-        // Criando um objeto de verificação de qualidade
         const qualityCheck = {
           isLegible: randomQuality > 0.15,
           hasNoDamage: randomQuality > 0.2,
@@ -94,7 +93,6 @@ const DocumentUploadForm = ({
           isComplete: randomQuality > 0.1,
         };
 
-        // Determinando a razão da rejeição, se houver
         let rejectionReason = "";
         if (!qualityCheck.isLegible) {
           rejectionReason =
@@ -110,7 +108,6 @@ const DocumentUploadForm = ({
             "Documento incompleto ou cortado. Por favor, envie o documento completo.";
         }
 
-        // Para a foto 3x4, verificações específicas
         if (isPhoto && !passed) {
           rejectionReason =
             "A foto não atende aos requisitos do formato 3x4. Certifique-se de que o rosto está centralizado e bem iluminado.";
@@ -125,54 +122,49 @@ const DocumentUploadForm = ({
     });
   };
 
+  const emitPhotoUploadEvent = (photoFile: File): void => {
+    const photoUrl = URL.createObjectURL(photoFile);
+    const photoEvent = new CustomEvent("photo3x4Uploaded", {
+      detail: { photoUrl },
+    }) as PhotoUploadEvent;
+    window.dispatchEvent(photoEvent);
+  };
+
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    docId: string,
-  ) => {
-    // Emitir evento personalizado para foto 3x4 quando for enviada
-    const emitPhotoUploadEvent = (photoFile: File) => {
-      const photoUrl = URL.createObjectURL(photoFile);
-      const photoEvent = new CustomEvent("photo3x4Uploaded", {
-        detail: { photoUrl },
-      });
-      window.dispatchEvent(photoEvent);
-    };
+    docId: string
+  ): void => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Se for uma foto 3x4, emitir evento
     if (docId === "photo") {
       emitPhotoUploadEvent(file);
     }
 
-    // Atualiza o documento com status de uploading e inicia o progresso
     setDocuments((docs) =>
       docs.map((doc) =>
         doc.id === docId
           ? { ...doc, status: "uploading", file, progress: 0 }
-          : doc,
-      ),
+          : doc
+      )
     );
 
-    // Simula o upload com progresso
     let progress = 0;
     const interval = setInterval(() => {
       progress += 10;
 
       if (progress <= 100) {
         setDocuments((docs) =>
-          docs.map((doc) => (doc.id === docId ? { ...doc, progress } : doc)),
+          docs.map((doc) => (doc.id === docId ? { ...doc, progress } : doc))
         );
       }
 
       if (progress >= 100) {
         clearInterval(interval);
 
-        // Após o upload, verificar a qualidade do documento
         checkDocumentQuality(file, docId)
           .then((qualityResult) => {
             if (qualityResult.passed) {
-              // Documento passou na verificação de qualidade
               setDocuments((docs) =>
                 docs.map((doc) =>
                   doc.id === docId
@@ -182,22 +174,20 @@ const DocumentUploadForm = ({
                         progress: 100,
                         qualityCheck: qualityResult.qualityCheck,
                       }
-                    : doc,
-                ),
+                    : doc
+                )
               );
 
-              // Verifica se todos os documentos foram enviados e aprovados
               const updatedDocs = documents.map((doc) =>
-                doc.id === docId ? { ...doc, status: "uploaded" } : doc,
+                doc.id === docId ? { ...doc, status: "uploaded" } : doc
               );
               const allUploaded = updatedDocs.every(
-                (doc) => doc.status === "uploaded",
+                (doc) => doc.status === "uploaded"
               );
               if (onDocumentsComplete) {
                 onDocumentsComplete(allUploaded);
               }
             } else {
-              // Documento falhou na verificação de qualidade
               setDocuments((docs) =>
                 docs.map((doc) =>
                   doc.id === docId
@@ -208,8 +198,8 @@ const DocumentUploadForm = ({
                         qualityCheck: qualityResult.qualityCheck,
                         rejectionReason: qualityResult.rejectionReason,
                       }
-                    : doc,
-                ),
+                    : doc
+                )
               );
             }
           })
@@ -219,31 +209,31 @@ const DocumentUploadForm = ({
               docs.map((doc) =>
                 doc.id === docId
                   ? { ...doc, status: "error", progress: 100 }
-                  : doc,
-              ),
+                  : doc
+              )
             );
           });
       }
     }, 300);
   };
 
-  const cancelUpload = (docId: string) => {
+  const cancelUpload = (docId: string): void => {
     setDocuments((docs) =>
       docs.map((doc) =>
         doc.id === docId
           ? { ...doc, status: "pending", progress: 0, file: undefined }
-          : doc,
-      ),
+          : doc
+      )
     );
   };
 
-  const removeDocument = (docId: string) => {
+  const removeDocument = (docId: string): void => {
     setDocuments((docs) =>
       docs.map((doc) =>
         doc.id === docId
           ? { ...doc, status: "pending", progress: 0, file: undefined }
-          : doc,
-      ),
+          : doc
+      )
     );
   };
 
