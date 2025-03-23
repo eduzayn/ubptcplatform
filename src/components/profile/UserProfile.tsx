@@ -4,15 +4,15 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import DocumentsArchive from "./DocumentsArchive";
 import PaymentStatus from "./PaymentStatus";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { UserProfile as UserProfileType, PaymentStatusType } from "@/types/dashboard";
 
 interface UserProfileProps {
@@ -203,83 +203,4 @@ const AsaasWarning: React.FC = () => (
   </Alert>
 );
 
-const StatusCard: React.FC<{ userData: UserProfileProps["userData"] }> = ({ userData }) => (
-  <Card className="border-2 border-muted">
-    <CardContent className="pt-6">
-      <StatusCardHeader userData={userData} />
-      <StatusDetails status={userData.paymentStatus} />
-      <PaymentHistory />
-    </CardContent>
-  </Card>
-);
-
-// Componentes auxiliares do StatusCard
-const StatusCardHeader: React.FC<{ userData: UserProfileProps["userData"] }> = ({ userData }) => (
-  <div className="flex items-center justify-between mb-4">
-    <div>
-      <h3 className="text-lg font-bold">Status da Associação</h3>
-      <p className="text-sm text-muted-foreground">
-        Informações sobre sua associação com a UBPTC
-      </p>
-    </div>
-    <StatusBadge status={userData.paymentStatus} />
-  </div>
-);
-
-const StatusDetails: React.FC<{ status: PaymentStatusType }> = ({ status }) => (
-  <div className="p-4 rounded-md bg-muted/50 mb-4">
-    <h4 className="font-medium mb-2">Detalhes do Status</h4>
-    {status === "active" ? (
-      <ActiveStatusContent />
-    ) : (
-      <SuspendedStatusContent />
-    )}
-  </div>
-);
-
-const ActiveStatusContent: React.FC = () => (
-  <div className="space-y-2">
-    <p className="text-sm">
-      Sua associação está <span className="font-bold text-green-600">ativa</span>.
-      Todos os pagamentos estão em dia.
-    </p>
-    <p className="text-sm">
-      Você tem acesso completo a todos os benefícios da UBPTC.
-    </p>
-  </div>
-);
-
-const SuspendedStatusContent: React.FC = () => (
-  <div className="space-y-2">
-    <p className="text-sm">
-      Sua associação está <span className="font-bold text-red-600">suspensa</span> devido
-      a pagamentos pendentes.
-    </p>
-    <p className="text-sm">
-      Para reativar sua associação, por favor regularize seus pagamentos.
-    </p>
-    <Button className="mt-2">Regularizar Pagamentos</Button>
-  </div>
-);
-
-const PaymentHistory: React.FC = () => (
-  <div className="p-4 rounded-md bg-muted/50">
-    <h4 className="font-medium mb-2">Histórico de Pagamentos</h4>
-    <div className="space-y-2">
-      {["Maio 2023", "Abril 2023", "Março 2023"].map((month) => (
-        <PaymentHistoryItem key={month} month={month} />
-      ))}
-    </div>
-  </div>
-);
-
-const PaymentHistoryItem: React.FC<{ month: string }> = ({ month }) => (
-  <div className="flex justify-between text-sm">
-    <span>{month}</span>
-    <Badge variant="outline" className="bg-green-50 text-green-600 hover:bg-green-50">
-      Pago
-    </Badge>
-  </div>
-);
-
-export default UserProfile;
+const StatusCard: React.FC<{ u
