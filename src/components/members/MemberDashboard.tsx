@@ -17,6 +17,14 @@ import UpcomingEvents from "../dashboard/UpcomingEvents";
 import CertificationTracker from "../dashboard/CertificationTracker";
 import CommunityHighlights from "../dashboard/CommunityHighlights";
 
+// Definindo a interface no início do arquivo
+interface MembershipOverviewProps {
+  memberSince: string;
+  membershipStatus: "active" | "suspended" | "pending";
+  nextPayment: string;
+  certificationProgress: number;
+}
+
 const MemberDashboard = () => {
   const [showSidebar, setShowSidebar] = useState(true);
 
@@ -46,23 +54,13 @@ const MemberDashboard = () => {
             <div className="max-w-6xl mx-auto space-y-6">
               <h1 className="text-3xl font-bold">Bem-vindo, João</h1>
 
-<MembershipOverview
-  memberSince="01/01/2023"
-  membershipStatus="active"  // Padronizando para usar membershipStatus
-  nextPayment="01/06/2023"  // Padronizando para usar nextPayment
-  certificationProgress={65}
-/>
+              <MembershipOverview
+                memberSince="01/01/2023"
+                membershipStatus="active"
+                nextPayment="01/06/2023"
+                certificationProgress={65}
+              />
 
-
-interface MembershipOverviewProps {
-  memberSince: string;
-  membershipStatus: "active" | "suspended" | "pending";  // Definindo os valores possíveis
-  nextPayment: string;
-  certificationProgress: number;
-}
-
-const MemberDashboard = () => {
-  // ... resto do código ...
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader className="pb-2">
