@@ -76,11 +76,7 @@ const ProfilePage = () => {
     specialization: "Psicanálise",
     memberSince: "15 de Janeiro, 2023",
     memberId: "UBPTC-2023-7845",
-<<<<<<< HEAD
     paymentStatus: "active" as "active" | "suspended",
-=======
-    paymentStatus: "active",
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
     avatarUrl: userPhotoUrl,
   };
 
@@ -149,11 +145,7 @@ const ProfilePage = () => {
                 <TabsContent value="payment" className="mt-6">
                   <PaymentStatus
                     plan="Profissional"
-<<<<<<< HEAD
                     status="active"
-=======
-                    status="Ativo"
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
                     nextBilling="15/07/2023"
                     amount="R$ 49,90"
                     paymentMethod="Cartão de crédito terminando em 4242"

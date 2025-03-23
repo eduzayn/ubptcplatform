@@ -11,16 +11,12 @@ import {
   Eye,
   MoreVertical,
   Upload,
-<<<<<<< HEAD
   Menu,
   Shield,
   Bell,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-=======
-} from "lucide-react";
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 import {
   Table,
   TableBody,
@@ -37,11 +33,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-<<<<<<< HEAD
-import { Link } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-=======
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
 
 const mockPages = [
   {

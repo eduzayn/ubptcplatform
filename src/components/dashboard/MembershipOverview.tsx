@@ -19,26 +19,21 @@ import {
 
 interface MembershipOverviewProps {
   memberSince?: string;
-<<<<<<< HEAD
   subscriptionStatus?: "active" | "inactive" | "pending" | string;
   membershipStatus?: string;
   nextBillingDate?: string;
   nextPayment?: string;
   certificationProgress?: number;
   membershipType?: "standard" | "premium" | string;
-=======
-  subscriptionStatus?: "active" | "inactive" | "pending";
-  nextBillingDate?: string;
-  certificationProgress?: number;
-  membershipType?: "standard" | "premium";
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
   paymentMethod?: string;
 }
 
 const MembershipOverview = ({
   memberSince = "January 15, 2023",
   subscriptionStatus = "active",
+  membershipStatus,
   nextBillingDate = "June 15, 2023",
+  nextPayment,
   certificationProgress = 45,
   membershipType = "standard",
   paymentMethod = "Credit Card ending in 4242",
@@ -72,7 +67,7 @@ const MembershipOverview = ({
           <div className="rounded-md bg-muted/50 p-3">
             <p className="text-sm font-medium">R$49.90/month</p>
             <p className="text-xs text-muted-foreground">
-              Próxima cobrança: {nextBillingDate}
+              Próxima cobrança: {nextBillingDate || nextPayment}
             </p>
             <p className="text-xs text-muted-foreground">
               Método de pagamento: {paymentMethod}
@@ -113,23 +108,29 @@ const MembershipOverview = ({
           </div>
           <div className="rounded-md bg-muted/50 p-3">
             <ul className="text-xs space-y-1">
-              <li>✓ Acesso à biblioteca digital</li>
-              <li>✓ Eventos e workshops semanais</li>
-              <li>✓ Carteira de identificação profissional</li>
-              <li>✓ Carteira de benefícios estudantis</li>
-              <li>✓ Acesso ao fórum da comunidade</li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-500">✓</span> Acesso a todos os
+                conteúdos e recursos
+              </li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-500">✓</span> Participação em
+                eventos e workshops
+              </li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-500">✓</span> Credenciais digitais
+                profissionais
+              </li>
+              <li className="flex items-center gap-1">
+                <span className="text-green-500">✓</span> Certificação após 12
+                meses de assinatura
+              </li>
             </ul>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between pt-2">
-        <Button variant="outline" size="sm" className="gap-1">
-          <Settings className="h-4 w-4" />
-          Gerenciar Assinatura
-        </Button>
-        <Button size="sm" className="gap-1">
-          <GraduationCap className="h-4 w-4" />
-          Ver Caminho de Certificação
+      <CardFooter className="flex justify-end">
+        <Button variant="outline" size="sm">
+          <Settings className="mr-2 h-4 w-4" /> Gerenciar Assinatura
         </Button>
       </CardFooter>
     </Card>

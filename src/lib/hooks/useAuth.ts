@@ -1,21 +1,4 @@
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { supabase } from "../supabase";
-import type { User } from "@supabase/supabase-js";
-
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Obter sessão inicial
-    const getInitialSession = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        setUser(data.session?.user || null);
-      } catch (error) {
-        console.error("Erro ao obter sessão inicial:", error);
-=======
 import { supabase, getCurrentUser, signIn, signOut, signUp } from "../supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -53,27 +36,17 @@ export const useAuthState = () => {
       } catch (error) {
         console.error("Erro ao verificar usuário:", error);
         setError(error as Error);
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
       } finally {
         setLoading(false);
       }
     };
 
-<<<<<<< HEAD
-    getInitialSession();
-
-    // Escutar mudanças de autenticação
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user || null);
-=======
     checkUser();
 
     // Configurar listener para mudanças de autenticação
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
         setLoading(false);
       },
     );
@@ -83,10 +56,6 @@ export const useAuthState = () => {
     };
   }, []);
 
-<<<<<<< HEAD
-  return { user, loading };
-}
-=======
   const handleSignIn = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -145,4 +114,48 @@ export const useAuthState = () => {
     signOut: handleSignOut,
   };
 };
->>>>>>> 4aad6eab0ea6fc2b03090df29174c9cfbfba9f8e
+
+// Simple hook for components that only need to check if user is authenticated
+export function useAuth() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Obter sessão inicial
+    const getInitialSession = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        setUser(data.session?.user || null);
+      } catch (error) {
+        console.error("Erro ao obter sessão inicial:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getInitialSession();
+
+    // Escutar mudanças de autenticação
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user || null);
+        setLoading(false);
+      },
+    );
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
+
+  return { user, loading };
+}
+
+// Create a React context provider component
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
+  children 
+}) => {
+  // This is a placeholder for the actual implementation
+  // The real implementation would use useAuthState and provide the context
+  return <>{children}</>;
+};
