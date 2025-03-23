@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { supabase, getCurrentUser, signIn, signOut, signUp } from "../supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -7,26 +7,29 @@ type AuthContextType = {
   loading: boolean;
   error: Error | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (
-    email: string,
-    password: string,
-    userData: any,
-  ) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, userData: any) => Promise<{ error: any }>;
   signOut: () => Promise<{ error: any }>;
 };
 
-// Export the type for use in the React context file
-export type { AuthContextType };
+// Criar o contexto
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// This hook provides the authentication logic but doesn't include the React context
-// The context will be defined in a separate JSX file
-export const useAuthState = () => {
+// Hook personalizado para usar o contexto
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+
+// Provider component
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // Verificar usuário atual ao carregar
     const checkUser = async () => {
       try {
         setLoading(true);
@@ -43,12 +46,11 @@ export const useAuthState = () => {
 
     checkUser();
 
-    // Configurar listener para mudanças de autenticação
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
         setLoading(false);
-      },
+      }
     );
 
     return () => {
@@ -71,11 +73,7 @@ export const useAuthState = () => {
     }
   };
 
-  const handleSignUp = async (
-    email: string,
-    password: string,
-    userData: any,
-  ) => {
+  const handleSignUp = async (email: string, password: string, userData: any) => {
     try {
       setLoading(true);
       const { error } = await signUp(email, password, userData);
@@ -105,7 +103,7 @@ export const useAuthState = () => {
     }
   };
 
-  return {
+  const value = {
     user,
     loading,
     error,
@@ -113,49 +111,8 @@ export const useAuthState = () => {
     signUp: handleSignUp,
     signOut: handleSignOut,
   };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Simple hook for components that only need to check if user is authenticated
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Obter sessão inicial
-    const getInitialSession = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        setUser(data.session?.user || null);
-      } catch (error) {
-        console.error("Erro ao obter sessão inicial:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getInitialSession();
-
-    // Escutar mudanças de autenticação
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user || null);
-        setLoading(false);
-      },
-    );
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
-
-  return { user, loading };
-}
-
-// Create a React context provider component
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
-  children 
-}) => {
-  // This is a placeholder for the actual implementation
-  // The real implementation would use useAuthState and provide the context
-  return <>{children}</>;
-};
+export type { AuthContextType };
