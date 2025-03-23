@@ -1,147 +1,78 @@
 import React from "react";
-import { Progress } from "../ui/progress";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { CheckCircle, Clock, Award, BookOpen } from "lucide-react";
-import { CertificationRequirement } from "@/types/dashboard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Check, AlertCircle } from "lucide-react";
 
-interface CertificationTrackerProps {
-  membershipMonths?: number;
-  completedRequirements?: CertificationRequirement[];
-  totalRequirements?: CertificationRequirement[];
-  certificationEligible?: boolean;
-  className?: string;
+interface CertificationRequirement {
+  id: string;
+  name: string;
+  description: string;
+  completed: boolean;
+  progress?: number;
 }
 
-const defaultRequirements: CertificationRequirement[] = [
-  {
-    id: "1",
-    name: "Introdução à Psicanálise",
-    completed: true,
-    description: "Módulo básico sobre fundamentos da psicanálise",
-  },
-  {
-    id: "2",
-    name: "Técnicas Terapêuticas",
-    completed: true,
-    description: "Abordagens práticas para sessões terapêuticas",
-  },
-  {
-    id: "3",
-    name: "Estudos de Caso",
-    completed: true,
-    description: "Análise de casos clínicos reais",
-  },
-  {
-    id: "4",
-    name: "Supervisão Clínica",
-    completed: false,
-    description: "Participação em sessões de supervisão",
-  },
-  {
-    id: "5",
-    name: "Trabalho Final",
-    completed: false,
-    description: "Apresentação de trabalho de conclusão",
-  },
-];
+interface CertificationTrackerProps {
+  requirements: CertificationRequirement[];
+}
 
-const defaultCompletedRequirements = defaultRequirements.filter(req => req.completed);
-
-const CertificationTracker = ({
-  membershipMonths = 5,
-  completedRequirements = defaultCompletedRequirements,
-  totalRequirements = defaultRequirements,
-  certificationEligible = false,
-  className,
-}: CertificationTrackerProps) => {
-  const progressPercentage = Math.round(
-    (completedRequirements.length / totalRequirements.length) * 100,
-  );
-
-  const monthsRemaining = 12 - membershipMonths;
+const CertificationTracker: React.FC<CertificationTrackerProps> = ({
+  requirements,
+}) => {
+  const totalRequirements = requirements.length;
+  const completedRequirements = requirements.filter((req) => req.completed).length;
+  const progress = (completedRequirements / totalRequirements) * 100;
 
   return (
-    <Card className={`w-full h-full bg-white shadow-sm ${className || ""}`}>
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-semibold">
-            Progresso da Certificação
-          </CardTitle>
-          <Badge
-            variant={certificationEligible ? "default" : "outline"}
-            className="ml-2"
-          >
-            {certificationEligible
-              ? "Elegível"
-              : `${monthsRemaining} meses restantes`}
-          </Badge>
-        </div>
-        <CardDescription>
-          Complete os requisitos e mantenha sua assinatura por 12 meses para
-          obter sua certificação
-        </CardDescription>
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>Rastreamento de Certificação</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Progresso dos módulos</span>
-            <span className="text-sm font-medium">{progressPercentage}%</span>
-          </div>
-          <Progress value={progressPercentage} className="h-2" />
-        </div>
-
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">
-              Tempo de associação: {membershipMonths} de 12 meses
-            </span>
-          </div>
-          <Progress value={(membershipMonths / 12) * 100} className="h-2" />
-        </div>
-
-        <div className="space-y-3 mt-4">
-          <h4 className="text-sm font-semibold">
-            Requisitos para certificação:
-          </h4>
-          {totalRequirements.map((req) => (
-            <div
-              key={req.id}
-              className="flex items-start gap-2 p-2 rounded-md bg-slate-50"
-            >
-              {req.completed ? (
-                <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              ) : (
-                <Clock className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
-              )}
-              <div>
-                <p className="text-sm font-medium">{req.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {req.description}
-                </p>
-              </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                Progresso da Certificação
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {completedRequirements} de {totalRequirements} requisitos
+                completados
+              </p>
             </div>
-          ))}
-        </div>
+            <div className="text-sm font-medium">
+              {Math.round(progress)}%
+            </div>
+          </div>
+          <Progress value={progress} className="h-2" />
 
-        <div className="mt-6 flex gap-3">
-          {certificationEligible ? (
-            <Button className="w-full">
-              <Award className="mr-2 h-4 w-4" /> Solicitar Certificação
-            </Button>
-          ) : (
-            <Button variant="outline" className="w-full">
-              <BookOpen className="mr-2 h-4 w-4" /> Ver Próximos Módulos
-            </Button>
-          )}
+          <div className="space-y-4">
+            {requirements.map((requirement) => (
+              <div
+                key={requirement.id}
+                className="flex items-start gap-4 p-4 border rounded-lg"
+              >
+                <div className="mt-1">
+                  {requirement.completed ? (
+                    <Check className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 text-yellow-500" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium">{requirement.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {requirement.description}
+                  </p>
+                  {requirement.progress !== undefined && (
+                    <Progress
+                      value={requirement.progress}
+                      className="h-1 mt-2"
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
