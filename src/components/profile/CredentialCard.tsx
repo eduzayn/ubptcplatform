@@ -2,11 +2,12 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { QrCode, Download, CheckCircle } from "lucide-react";
+import { QrCode, Download } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CredentialType } from "@/types/user";
 
 interface CredentialCardProps {
-  type: "professional" | "student";
+  type: CredentialType;
   userData: {
     name: string;
     cpf: string;
@@ -17,7 +18,7 @@ interface CredentialCardProps {
     avatarUrl?: string;
     paymentStatus: "active" | "suspended";
   };
-  onQrCodeClick: (type: "professional" | "student") => void;
+  onQrCodeClick: (type: CredentialType) => void;
 }
 
 const CredentialCard = ({
