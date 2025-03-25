@@ -2,16 +2,34 @@ import { Shield, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import AdminLoginModal from "@/components/admin/AdminLoginModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleAdminClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("Clicou no Shield - Header");
+    
+    // Remove qualquer token existente
+    localStorage.removeItem('adminToken');
+    
+    // Força a abertura do modal
     setIsLoginModalOpen(true);
+    
+    // Previne a navegação
+    if (e.target instanceof HTMLElement) {
+      const link = e.target.closest('a');
+      if (link) {
+        e.preventDefault();
+      }
+    }
+    
+    // Se tentar navegar para /admin, impede
+    if (window.location.pathname.includes('/admin')) {
+      navigate('/');
+    }
   };
 
   return (
@@ -49,6 +67,7 @@ export function Header() {
             <Bell className="h-5 w-5" />
           </Button>
           
+          {/* Mudança importante aqui: removido qualquer Link em volta do botão */}
           <Button
             variant="ghost"
             size="icon"
