@@ -1,18 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { Bell, Menu, Search, Shield, UserPlus } from "lucide-react";
+import { Bell, Menu, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserMenu from "./UserMenu";
-import AdminLoginModal from "@/components/admin/AdminLoginModal";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import {
   Tooltip,
@@ -22,7 +12,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 
 interface NavbarProps {
@@ -40,14 +29,6 @@ const Navbar = ({
   onMenuToggle = () => {},
   isAdmin = false,
 }: NavbarProps) => {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  const handleAdminClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Abrindo modal de login administrativo");
-    setIsLoginModalOpen(true);
-  };
-
   return (
     <nav className="w-full h-[70px] bg-background border-b border-border px-4 flex items-center justify-between shadow-sm">
       {/* Left section with menu toggle and logo */}
@@ -94,23 +75,6 @@ const Navbar = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleAdminClick}
-              >
-                <Shield className="h-5 w-5 text-primary" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Painel Administrativo</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
                 {notificationCount > 0 && (
@@ -133,11 +97,6 @@ const Navbar = ({
           isAdmin={isAdmin}
         />
       </div>
-
-      <AdminLoginModal 
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-      />
     </nav>
   );
 };
