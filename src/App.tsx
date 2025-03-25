@@ -51,46 +51,52 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 export function App() {
   return (
     <Router>
-      <Header />
-      <Routes>
-        {/* Rotas Públicas */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/courses" element={<CoursesPage />} />
-        <Route path="/library" element={<LibraryPage />} />
-        <Route path="/community" element={<CommunityPage />} />
-        <Route path="/calendar" element={<CalendarEventsPage />} />
-        <Route path="/association" element={<AssociationPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        
-        {/* Rotas de Perfil */}
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/profile/settings" element={<AccountSettings />} />
-        <Route path="/my-courses" element={<ProfilePage />} />
+      <div className="min-h-screen bg-background font-sans antialiased">
+        <Header />
+        <div className="relative flex min-h-screen flex-col">
+          <div className="flex-1">
+            <Routes>
+              {/* Rotas Públicas */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/library" element={<LibraryPage />} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/calendar" element={<CalendarEventsPage />} />
+              <Route path="/association" element={<AssociationPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              
+              {/* Rotas de Perfil */}
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/settings" element={<AccountSettings />} />
+              <Route path="/my-courses" element={<ProfilePage />} />
 
-        {/* Rotas Administrativas (Protegidas) */}
-        <Route
-          path="/admin/*"
-          element={
-            <RequireAuth>
-              <AdminLayout>
-                <Routes>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="members" element={<MembersPage />} />
-                  <Route path="courses/*" element={<AdminDashboard />} />
-                  <Route path="content/*" element={<AdminDashboard />} />
-                  <Route path="events/*" element={<AdminDashboard />} />
-                  <Route path="settings/*" element={<AdminDashboard />} />
-                  {/* Redireciona rotas admin inválidas para o dashboard */}
-                  <Route path="*" element={<Navigate to="/admin" replace />} />
-                </Routes>
-              </AdminLayout>
-            </RequireAuth>
-          }
-        />
+              {/* Rotas Administrativas (Protegidas) */}
+              <Route
+                path="/admin/*"
+                element={
+                  <RequireAuth>
+                    <AdminLayout>
+                      <Routes>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="members" element={<MembersPage />} />
+                        <Route path="courses/*" element={<AdminDashboard />} />
+                        <Route path="content/*" element={<AdminDashboard />} />
+                        <Route path="events/*" element={<AdminDashboard />} />
+                        <Route path="settings/*" element={<AdminDashboard />} />
+                        {/* Redireciona rotas admin inválidas para o dashboard */}
+                        <Route path="*" element={<Navigate to="/admin" replace />} />
+                      </Routes>
+                    </AdminLayout>
+                  </RequireAuth>
+                }
+              />
 
-        {/* Rota 404 */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+              {/* Rota 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </div>
+        </div>
+      </div>
     </Router>
   );
 }
