@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import HomePage from './pages/HomePage';
 import AdminLayout from './components/admin/AdminLayout';
@@ -14,39 +13,6 @@ import CalendarEventsPage from './pages/CalendarEventsPage';
 import AssociationPage from './pages/AssociationPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AccountSettings from './pages/AccountSettings';
-
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('adminToken');
-      setIsAuthenticated(!!token);
-      setIsChecking(false);
-    };
-
-    checkAuth();
-
-    const interval = setInterval(checkAuth, 5 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (isChecking) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <>{children}</>;
-}
 
 export function App() {
   return (
@@ -70,24 +36,21 @@ export function App() {
               <Route path="/profile/settings" element={<AccountSettings />} />
               <Route path="/my-courses" element={<ProfilePage />} />
 
-              {/* Rotas Administrativas (Protegidas) */}
+              {/* Rotas Administrativas */}
               <Route
                 path="/admin/*"
                 element={
-                  <RequireAuth>
-                    <AdminLayout>
-                      <Routes>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="members" element={<MembersPage />} />
-                        <Route path="courses/*" element={<AdminDashboard />} />
-                        <Route path="content/*" element={<AdminDashboard />} />
-                        <Route path="events/*" element={<AdminDashboard />} />
-                        <Route path="settings/*" element={<AdminDashboard />} />
-                        {/* Redireciona rotas admin inválidas para o dashboard */}
-                        <Route path="*" element={<Navigate to="/admin" replace />} />
-                      </Routes>
-                    </AdminLayout>
-                  </RequireAuth>
+                  <AdminLayout>
+                    <Routes>
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="members" element={<MembersPage />} />
+                      <Route path="courses/*" element={<AdminDashboard />} />
+                      <Route path="content/*" element={<AdminDashboard />} />
+                      <Route path="events/*" element={<AdminDashboard />} />
+                      <Route path="settings/*" element={<AdminDashboard />} />
+                      <Route path="*" element={<Navigate to="/admin" replace />} />
+                    </Routes>
+                  </AdminLayout>
                 }
               />
 
