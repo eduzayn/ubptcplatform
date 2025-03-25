@@ -13,8 +13,22 @@ import CalendarEventsPage from './pages/CalendarEventsPage';
 import AssociationPage from './pages/AssociationPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AccountSettings from './pages/AccountSettings';
+import { useEffect, useState } from 'react';
 
 export function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    setIsAuthenticated(!!token);
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
   return (
     <Router>
       <div className="min-h-screen bg-background font-sans antialiased">
@@ -40,17 +54,21 @@ export function App() {
               <Route
                 path="/admin/*"
                 element={
-                  <AdminLayout>
-                    <Routes>
-                      <Route index element={<AdminDashboard />} />
-                      <Route path="members" element={<MembersPage />} />
-                      <Route path="courses/*" element={<AdminDashboard />} />
-                      <Route path="content/*" element={<AdminDashboard />} />
-                      <Route path="events/*" element={<AdminDashboard />} />
-                      <Route path="settings/*" element={<AdminDashboard />} />
-                      <Route path="*" element={<Navigate to="/admin" replace />} />
-                    </Routes>
-                  </AdminLayout>
+                  isAuthenticated ? (
+                    <AdminLayout>
+                      <Routes>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="members" element={<MembersPage />} />
+                        <Route path="courses/*" element={<AdminDashboard />} />
+                        <Route path="content/*" element={<AdminDashboard />} />
+                        <Route path="events/*" element={<AdminDashboard />} />
+                        <Route path="settings/*" element={<AdminDashboard />} />
+                        <Route path="*" element={<Navigate to="/admin" replace />} />
+                      </Routes>
+                    </AdminLayout>
+                  ) : (
+                    <Navigate to="/" replace />
+                  )
                 }
               />
 
