@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Navbar from "../layout/Navbar";
 import AdminSidebar from "./AdminSidebar";
-import AdminLoginModal from "./AdminLoginModal";
 import ProtectedRoute from "./ProtectedRoute";
 
 interface AdminLayoutProps {
@@ -10,33 +9,9 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [showSidebar, setShowSidebar] = useState(true);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
-  };
-
-  const handleLogin = async (email: string, cpf: string) => {
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, cpf }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Falha na autenticação');
-      }
-
-      const { token, user } = await response.json();
-      localStorage.setItem('adminToken', token);
-      setIsLoginModalOpen(false);
-    } catch (error) {
-      console.error('Erro no login:', error);
-      throw error;
-    }
   };
 
   return (
@@ -63,12 +38,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </main>
           </div>
         </div>
-
-        <AdminLoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-          onLogin={handleLogin}
-        />
       </div>
     </ProtectedRoute>
   );
