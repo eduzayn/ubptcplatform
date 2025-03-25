@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import AdminLoginModal from './AdminLoginModal';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,39 +9,31 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       const token = localStorage.getItem('adminToken');
       
       if (!token) {
         setIsAuthenticated(false);
+        setIsLoginModalOpen(true);
         return;
       }
 
-      try {
-        const response = await fetch('/api/admin/validate', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          setIsAuthenticated(true);
-        } else {
-          localStorage.removeItem('adminToken');
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        localStorage.removeItem('adminToken');
-        setIsAuthenticated(false);
-      }
+      setIsAuthenticated(true);
     };
 
     checkAuth();
   }, []);
+
+  const handleCloseModal = () => {
+    setIsLoginModalOpen(false);
+    if (!isAuthenticated) {
+      window.location.href = '/';
+    }
+  };
 
   if (isAuthenticated === null) {
     return (
@@ -51,7 +44,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return (
+      <>
+        <AdminLoginModal 
+          isOpen={isLoginModalOpen}
+          onClose={handleCloseModal}
+        />
+        <Navigate to="/" state={{ from: location }} replace />
+      </>
+    );
   }
 
   return <>{children}</>;
