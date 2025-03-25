@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, Menu, Search, Shield, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserMenu from "./UserMenu";
+import AdminLoginModal from "@/components/admin/AdminLoginModal";
 
 import {
   DropdownMenu,
@@ -39,6 +40,14 @@ const Navbar = ({
   onMenuToggle = () => {},
   isAdmin = false,
 }: NavbarProps) => {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const handleAdminClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("Abrindo modal de login administrativo");
+    setIsLoginModalOpen(true);
+  };
+
   return (
     <nav className="w-full h-[70px] bg-background border-b border-border px-4 flex items-center justify-between shadow-sm">
       {/* Left section with menu toggle and logo */}
@@ -82,22 +91,22 @@ const Navbar = ({
           </Button>
         </Link>
 
-        {isAdmin && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to="/admin">
-                  <Button variant="ghost" size="icon">
-                    <Shield className="h-5 w-5 text-primary" />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Painel Administrativo</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleAdminClick}
+              >
+                <Shield className="h-5 w-5 text-primary" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Painel Administrativo</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <TooltipProvider>
           <Tooltip>
@@ -124,6 +133,11 @@ const Navbar = ({
           isAdmin={isAdmin}
         />
       </div>
+
+      <AdminLoginModal 
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </nav>
   );
 };
