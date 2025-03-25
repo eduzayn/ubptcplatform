@@ -1,53 +1,40 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Lock } from "lucide-react";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Lock } from 'lucide-react';
+import { loginAdmin } from '@/pages/api/admin/auth';
 
 interface AdminLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const AdminLoginModal = ({ isOpen, onClose }: AdminLoginModalProps) => {
-  const [email, setEmail] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const formatCPF = (value: string) => {
-    return value
-      .replace(/\D/g, "")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})/, "$1-$2")
-      .replace(/(-\d{2})\d+?$/, "$1");
+    return value.replace(/\D/g, '').slice(0, 11);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setIsLoading(true);
 
     try {
-      // Simular verificação de credenciais
-      if (email === "admin@ubptc.org" && cpf === "123.456.789-00") {
-        localStorage.setItem("adminToken", "dummy-token");
-        onClose();
-        navigate("/admin");
-      } else {
-        setError("Credenciais administrativas inválidas");
-      }
+      const response = await loginAdmin(email, cpf);
+      localStorage.setItem('adminToken', response.token);
+      onClose();
+      navigate('/admin');
     } catch (error) {
-      setError("Erro ao fazer login. Tente novamente.");
+      setError('Credenciais inválidas. Por favor, tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -62,9 +49,10 @@ const AdminLoginModal = ({ isOpen, onClose }: AdminLoginModalProps) => {
             Acesso Administrativo
           </DialogTitle>
           <DialogDescription>
-            Acesso restrito para administradores do sistema.
+            Esta área é restrita a administradores. Por favor, faça login para continuar.
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Input
@@ -79,23 +67,26 @@ const AdminLoginModal = ({ isOpen, onClose }: AdminLoginModalProps) => {
               placeholder="CPF"
               value={cpf}
               onChange={(e) => setCpf(formatCPF(e.target.value))}
-              maxLength={14}
               required
             />
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Verificando..." : "Acessar"}
+              {isLoading ? 'Entrando...' : 'Entrar'}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default AdminLoginModal;
+}
