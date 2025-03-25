@@ -1,118 +1,60 @@
-import { useState, useEffect, createContext, useContext } from "react";
-import { supabase, getCurrentUser, signIn, signOut, signUp } from "../supabase";
-import type { User } from "@supabase/supabase-js";
+import jwt from 'jsonwebtoken';
 
-type AuthContextType = {
-  user: User | null;
-  loading: boolean;
-  error: Error | null;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, userData: any) => Promise<{ error: any }>;
-  signOut: () => Promise<{ error: any }>;
-};
+const JWT_SECRET = import.meta.env.VITE_JWT_SECRET || 'seu-segredo-fallback';
 
-// Criar o contexto
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Hook personalizado para usar o contexto
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+interface AdminUser {
+  email: string;
+  name: string;
+  avatarUrl: string;
 }
 
-// Provider component
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+interface LoginResponse {
+  token: string;
+  user: AdminUser;
+}
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        setLoading(true);
-        const { user, error } = await getCurrentUser();
-        if (error) throw error;
-        setUser(user);
-      } catch (error) {
-        console.error("Erro ao verificar usuário:", error);
-        setError(error as Error);
-      } finally {
-        setLoading(false);
-      }
+export async function loginAdmin(email: string, cpf: string): Promise<LoginResponse> {
+  try {
+    // Simula uma chamada de API
+    const isValid = await validateAdminCredentials(email, cpf);
+
+    if (!isValid) {
+      throw new Error('Credenciais inválidas');
+    }
+
+    const token = jwt.sign({ email, role: 'admin' }, JWT_SECRET, {
+      expiresIn: '1d',
+    });
+
+    return {
+      token,
+      user: {
+        email,
+        name: 'Administrador',
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+      },
     };
+  } catch (error) {
+    console.error('Erro no login:', error);
+    throw error;
+  }
+}
 
-    checkUser();
+export function validateAdminToken(token: string): boolean {
+  try {
+    if (!token) return false;
+    jwt.verify(token, JWT_SECRET);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, []);
-
-  const handleSignIn = async (email: string, password: string) => {
-    try {
-      setLoading(true);
-      const { error } = await signIn(email, password);
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      setError(error as Error);
-      return { error };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignUp = async (email: string, password: string, userData: any) => {
-    try {
-      setLoading(true);
-      const { error } = await signUp(email, password, userData);
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      console.error("Erro ao criar conta:", error);
-      setError(error as Error);
-      return { error };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      setLoading(true);
-      const { error } = await signOut();
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      setError(error as Error);
-      return { error };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const value = {
-    user,
-    loading,
-    error,
-    signIn: handleSignIn,
-    signUp: handleSignUp,
-    signOut: handleSignOut,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export type { AuthContextType };
+async function validateAdminCredentials(email: string, cpf: string): Promise<boolean> {
+  // Aqui você implementaria a validação real com seu backend
+  // Por enquanto, vamos usar uma validação simples
+  const isValidEmail = email.endsWith('@admin.com');
+  const isValidCPF = cpf.length === 11;
+  
+  return isValidEmail && isValidCPF;
+}
