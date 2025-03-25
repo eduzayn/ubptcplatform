@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Header } from './components/layout/Header';
 import HomePage from './pages/HomePage';
 import AdminLayout from './components/admin/AdminLayout';
@@ -13,20 +14,31 @@ import CalendarEventsPage from './pages/CalendarEventsPage';
 import AssociationPage from './pages/AssociationPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AccountSettings from './pages/AccountSettings';
-import { useEffect, useState } from 'react';
 
 export function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    setIsAuthenticated(!!token);
-    setIsLoading(false);
+    const checkAuth = () => {
+      const token = localStorage.getItem('adminToken');
+      setIsAuthenticated(!!token);
+      setIsLoading(false);
+    };
+
+    checkAuth();
+
+    // Verificar o token periodicamente
+    const interval = setInterval(checkAuth, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   if (isLoading) {
-    return <div>Carregando...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   return (
